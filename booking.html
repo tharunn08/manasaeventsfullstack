@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Event – MANASA</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+<style>
+  .booking-page{max-width:960px;margin:100px auto 60px;padding:0 20px}
+  .booking-grid{display:grid;grid-template-columns:1fr 380px;gap:28px;align-items:start}
+  @media(max-width:820px){.booking-grid{grid-template-columns:1fr}}
+  .event-summary{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;position:sticky;top:90px}
+  .event-summary-thumb{height:160px;display:flex;align-items:center;justify-content:center;font-size:72px}
+  .event-summary-body{padding:20px}
+  .ev-title{font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:10px;color:var(--text)}
+  .ev-meta-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:6px}
+  .ev-meta-row i{color:var(--accent);width:14px}
+  .price-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid var(--border);margin-top:14px}
+  .price-label{font-size:13px;color:var(--text-muted)}
+  .price-amount{font-size:22px;font-weight:800;font-family:var(--font-display);color:var(--accent)}
+  .booking-form-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+  .booking-form-header{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:22px 24px}
+  .booking-form-body{padding:28px}
+  .ticket-counter{display:flex;align-items:center;gap:16px;margin-top:8px}
+  .tc-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,0.04);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+  .tc-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .tc-num{font-size:20px;font-weight:700;font-family:var(--font-display);min-width:30px;text-align:center;color:var(--text)}
+  .order-line{display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:8px}
+  .order-total{display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--text);padding-top:12px;border-top:1px solid var(--border);margin-top:8px}
+  #confirmationScreen{display:none;text-align:center;padding:48px 28px}
+  .confirm-icon{width:80px;height:80px;background:rgba(16,185,129,0.15);border:2px solid #10b981;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+  .confirm-order-box{background:rgba(0,0,0,0.03);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0;text-align:left}
+  .confirm-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:8px}
+  .confirm-row span:last-child{color:var(--text);font-weight:600}
+  .notify-banner{display:none;border-radius:12px;padding:16px;margin:16px 0;text-align:left;border:1px solid #a5d6a7;background:#e8f5e9}
+  .notify-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;margin-bottom:8px;color:#fff}
+  .notify-btn-wa{background:#25d366}
+  .notify-btn-sms{background:#2196f3}
+  .notify-btn:last-child{margin-bottom:0}
+
+  /* ── Success popup ── */
+  #successPopup{
+    display:none;position:fixed;top:90px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(135deg,#10b981,#059669);color:#fff;
+    padding:18px 32px 22px;border-radius:16px;
+    box-shadow:0 8px 40px rgba(16,185,129,0.45);z-index:99999;
+    font-size:15px;font-weight:700;text-align:center;
+    animation:popIn .4s cubic-bezier(.34,1.56,.64,1);
+    white-space:nowrap;min-width:320px;
+  }
+  #successPopupBar{
+    height:3px;background:rgba(255,255,255,0.35);border-radius:2px;
+    margin-top:10px;overflow:hidden;
+  }
+  #successPopupBarFill{
+    height:100%;background:#fff;border-radius:2px;width:100%;
+    transition:width 40s linear;
+  }
+  @keyframes popIn{from{opacity:0;transform:translateX(-50%) scale(.7) translateY(-20px)}to{opacity:1;transform:translateX(-50%) scale(1) translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- SUCCESS POPUP -->
+<div id="successPopup">
+  <div>
+    <i class="fas fa-check-circle" style="margin-right:8px;font-size:18px"></i>
+    <span id="successPopupText">Your event has been booked successfully!</span>
+  </div>
+  <div id="successPopupBar"><div id="successPopupBarFill"></div></div>
+</div>
+
+<nav class="navbar scrolled">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html" class="active">Events</a></li>
+      <li><a href="organizer.html">Organizers</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="events.html" class="btn-ghost">&#8592; Back to Events</a>
+    </div>
+  </div>
+</nav>
+
+<div class="booking-page">
+  <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:24px">
+    <a href="index.html" style="color:var(--text-muted)">Home</a>
+    <i class="fas fa-chevron-right" style="font-size:10px"></i>
+    <a href="events.html" style="color:var(--text-muted)">Events</a>
+    <i class="fas fa-chevron-right" style="font-size:10px"></i>
+    <span style="color:var(--accent)">Book Ticket</span>
+  </div>
+
+  <div class="booking-grid">
+    <!-- LEFT: Booking form -->
+    <div class="booking-form-card">
+      <div class="booking-form-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;background:rgba(255,92,53,0.15);border:1px solid rgba(255,92,53,0.3);border-radius:10px;display:flex;align-items:center;justify-content:center">
+            <i class="fas fa-ticket-alt" style="color:var(--accent);font-size:16px"></i>
+          </div>
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:18px;margin:0;color:#fff">Book Your Ticket</h2>
+            <p style="font-size:12px;color:rgba(255,255,255,0.4);margin:3px 0 0">Fill in your details to confirm the booking</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-form-body" id="bookingForm">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="form-field">
+            <label>First Name *</label>
+            <input type="text" class="form-input" id="bkFirst" placeholder="Kavya">
+          </div>
+          <div class="form-field">
+            <label>Last Name</label>
+            <input type="text" class="form-input" id="bkLast" placeholder="Sharma">
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Email Address *</label>
+          <input type="email" class="form-input" id="bkEmail" placeholder="you@example.com">
+        </div>
+        <div class="form-field">
+          <label>Phone Number *</label>
+          <input type="tel" class="form-input" id="bkPhone" placeholder="+91 98765 43210">
+        </div>
+        <div class="form-field">
+          <label>Number of Tickets</label>
+          <div class="ticket-counter">
+            <button class="tc-btn" onclick="changeTickets(-1)"><i class="fas fa-minus"></i></button>
+            <span class="tc-num" id="ticketCount">1</span>
+            <button class="tc-btn" onclick="changeTickets(1)"><i class="fas fa-plus"></i></button>
+            <span style="font-size:13px;color:var(--text-muted)">(max 10)</span>
+          </div>
+        </div>
+        <div style="background:rgba(0,0,0,0.03);border:1px solid var(--border);border-radius:12px;padding:16px;margin:20px 0">
+          <p style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Order Summary</p>
+          <div class="order-line"><span id="oTicketLabel">1 x Ticket</span><span id="oTicketPrice">&#8377;0</span></div>
+          <div class="order-line"><span>Service Fee (5%)</span><span id="oServiceFee">&#8377;0</span></div>
+          <div class="order-total"><span>Total</span><span id="oTotal" style="color:var(--accent)">&#8377;0</span></div>
+        </div>
+        <button type="button" onclick="confirmBooking()"
+          style="width:100%;background:var(--accent);border:none;color:#fff;padding:15px;border-radius:10px;cursor:pointer;font-size:16px;font-weight:700;margin-top:4px">
+          <i class="fas fa-check-circle"></i> Confirm Booking
+        </button>
+        <p style="text-align:center;font-size:12px;color:var(--text-dim);margin-top:12px">
+          <i class="fas fa-lock" style="margin-right:4px"></i>Secure booking &middot; Your data is safe
+        </p>
+      </div>
+
+      <!-- CONFIRMATION SCREEN -->
+      <div id="confirmationScreen">
+        <div class="confirm-icon">
+          <i class="fas fa-check" style="color:#10b981;font-size:32px"></i>
+        </div>
+        <h2 style="font-family:var(--font-display);font-size:24px;color:var(--text);margin-bottom:8px">Booking Confirmed! &#127881;</h2>
+        <p style="color:var(--text-muted);font-size:14px">Your order has been saved. See you at the event!</p>
+        <div class="confirm-order-box" id="confirmDetails"></div>
+
+        <div id="notifyBanner" class="notify-banner">
+          <p style="font-size:13px;font-weight:700;color:#1b5e20;margin-bottom:10px">
+            <i class="fas fa-bell"></i>&nbsp;Admin Notification &mdash; tap if not sent automatically:
+          </p>
+          <a id="waFallbackLink" href="#" target="_blank" class="notify-btn notify-btn-wa">
+            <i class="fab fa-whatsapp" style="font-size:18px"></i> WhatsApp to +91 7411038339
+          </a>
+          <a id="smsFallbackLink" href="#" class="notify-btn notify-btn-sms">
+            <i class="fas fa-sms" style="font-size:18px"></i> SMS to +91 7411038339
+          </a>
+        </div>
+
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap">
+          <a href="events.html" class="btn-ghost" style="padding:12px 24px">Browse More Events</a>
+          <a href="dashboard.html" class="btn-primary" style="padding:12px 24px">My Dashboard</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Event summary -->
+    <div class="event-summary">
+      <div class="event-summary-thumb" id="evThumb" style="background:linear-gradient(135deg,#f97316,#ef4444)">&#127915;</div>
+      <div class="event-summary-body">
+        <div class="ev-title" id="evTitle">Loading event...</div>
+        <div class="ev-meta-row"><i class="far fa-calendar"></i><span id="evDate">&mdash;</span></div>
+        <div class="ev-meta-row"><i class="far fa-clock"></i><span id="evTime">&mdash;</span></div>
+        <div class="ev-meta-row"><i class="fas fa-map-marker-alt"></i><span id="evVenue">&mdash;</span></div>
+        <div class="ev-meta-row"><i class="fas fa-tag"></i><span id="evCat">&mdash;</span></div>
+        <p id="evDesc" style="font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.6"></p>
+        <div class="price-row">
+          <span class="price-label">Price per ticket</span>
+          <span class="price-amount" id="evPrice">FREE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="db.js"></script>
+<script>
+var _event   = null;
+var _tickets = 1;
+
+window.addEventListener('DOMContentLoaded', async function() {
+  await initDB();
+  var params  = new URLSearchParams(window.location.search);
+  var eventId = parseInt(params.get('id'));
+  if (!eventId) { showToast('No event selected.'); return; }
+  _event = EVENTS.find(function(e){ return e.id === eventId; });
+  if (!_event) { showToast('Event not found.'); return; }
+
+  document.getElementById('evThumb').style.background = _event.gradient;
+  document.getElementById('evThumb').textContent      = _event.emoji;
+  document.getElementById('evTitle').textContent      = _event.title;
+  document.getElementById('evDate').textContent       = formatDate(_event.date);
+  document.getElementById('evTime').textContent       = _event.time;
+  document.getElementById('evVenue').textContent      = _event.venue + ', ' + _event.location;
+  document.getElementById('evCat').textContent        = _event.category;
+  document.getElementById('evDesc').textContent       = _event.description;
+  document.getElementById('evPrice').textContent      = _event.price === 0 ? 'FREE' : '\u20b9' + _event.price;
+
+  var stored = localStorage.getItem('manasaUser');
+  if (stored) {
+    try {
+      var u = JSON.parse(stored);
+      if (u.email) document.getElementById('bkEmail').value = u.email;
+      if (u.name) {
+        var parts = u.name.split(' ');
+        document.getElementById('bkFirst').value = parts[0] || '';
+        document.getElementById('bkLast').value  = parts.slice(1).join(' ') || '';
+      }
+    } catch(e){}
+  }
+  updateOrderSummary();
+});
+
+function changeTickets(delta) {
+  _tickets = Math.max(1, Math.min(10, _tickets + delta));
+  document.getElementById('ticketCount').textContent = _tickets;
+  updateOrderSummary();
+}
+
+function updateOrderSummary() {
+  if (!_event) return;
+  var sub  = _event.price * _tickets;
+  var fee  = _event.price === 0 ? 0 : Math.round(sub * 0.05);
+  var tot  = sub + fee;
+  document.getElementById('oTicketLabel').textContent = _tickets + ' x Ticket';
+  document.getElementById('oTicketPrice').textContent = _event.price === 0 ? 'FREE' : '\u20b9' + sub.toLocaleString('en-IN');
+  document.getElementById('oServiceFee').textContent  = fee === 0 ? '\u20b90' : '\u20b9' + fee.toLocaleString('en-IN');
+  document.getElementById('oTotal').textContent       = tot === 0 ? 'FREE' : '\u20b9' + tot.toLocaleString('en-IN');
+}
+
+function showSuccessPopup(eventTitle) {
+  var popup = document.getElementById('successPopup');
+  var bar   = document.getElementById('successPopupBarFill');
+  var msg   = '\u2713 Booking confirmed! See you at ' + eventTitle + ' \uD83C\uDF89';
+  document.getElementById('successPopupText').textContent = msg;
+  // Save to localStorage so it re-appears if user navigates back from WhatsApp
+  localStorage.setItem('manasa_booking_popup', JSON.stringify({
+    msg: msg,
+    until: Date.now() + 40000   // 40 seconds from now
+  }));
+  _doShowPopup(msg, 40000);
+}
+
+function _doShowPopup(msg, durationMs) {
+  var popup = document.getElementById('successPopup');
+  var bar   = document.getElementById('successPopupBarFill');
+  document.getElementById('successPopupText').textContent = msg;
+  bar.style.transition = 'none';
+  bar.style.width = '100%';
+  popup.style.opacity = '';
+  popup.style.transition = '';
+  popup.style.display = 'block';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      bar.style.transition = 'width ' + (durationMs / 1000) + 's linear';
+      bar.style.width = '0%';
+    });
+  });
+  clearTimeout(window._successPopupTimer);
+  window._successPopupTimer = setTimeout(function(){
+    popup.style.opacity = '0';
+    popup.style.transition = 'opacity .5s';
+    setTimeout(function(){
+      popup.style.display = 'none';
+      popup.style.opacity = '';
+      popup.style.transition = '';
+      localStorage.removeItem('manasa_booking_popup');
+    }, 500);
+  }, durationMs);
+}
+
+// On page load, check if there's a pending popup (user returned from WhatsApp)
+window.addEventListener('DOMContentLoaded', function() {
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem('manasa_booking_popup')); } catch(e){}
+  if (saved && saved.until && saved.until > Date.now()) {
+    var remaining = saved.until - Date.now();
+    _doShowPopup(saved.msg, remaining);
+  }
+});
+
+async function confirmBooking() {
+  var first = document.getElementById('bkFirst').value.trim();
+  var last  = document.getElementById('bkLast').value.trim();
+  var email = document.getElementById('bkEmail').value.trim();
+  var phone = document.getElementById('bkPhone').value.trim();
+
+  if (!first || !email || !phone) { showToast('Please fill in all required fields'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Please enter a valid email address'); return; }
+
+  var sub      = _event.price * _tickets;
+  var fee      = _event.price === 0 ? 0 : Math.round(sub * 0.05);
+  var total    = sub + fee;
+  var totalStr = total === 0 ? 'FREE' : '\u20b9' + total.toLocaleString('en-IN');
+  var fullName = [first, last].filter(Boolean).join(' ');
+
+  await initDB();
+  var result = await dbCreateBooking({
+    userName:   fullName, userEmail: email, userPhone: phone,
+    eventId:    _event.id, eventTitle: _event.title,
+    eventDate:  _event.date, eventTime: _event.time, eventVenue: _event.venue,
+    tickets:    _tickets, unitPrice: _event.price, totalPrice: total
+  });
+
+  if (!result.success) { showToast('Booking failed: ' + result.error); return; }
+
+  // Show confirmation screen
+  document.getElementById('bookingForm').style.display = 'none';
+  document.getElementById('confirmationScreen').style.display = 'block';
+
+  document.getElementById('confirmDetails').innerHTML =
+    row('Order ID',    result.orderId) +
+    row('Name',        fullName) +
+    row('Email',       email) +
+    row('Phone',       phone) +
+    row('Event',       _event.title) +
+    row('Date & Time', formatDate(_event.date) + ' \u00b7 ' + _event.time) +
+    row('Venue',       _event.venue) +
+    row('Tickets',     _tickets) +
+    row('Total Paid',  totalStr) +
+    row('Status',      '<span style="color:#10b981;font-weight:700">\u2713 CONFIRMED</span>');
+
+  // Show success popup to user
+  showSuccessPopup(_event.title);
+
+  // Send WhatsApp + SMS to admin
+  sendAdminNotifications({
+    orderId: result.orderId, name: fullName, email: email, phone: phone,
+    event:   _event.title,  date: formatDate(_event.date), time: _event.time,
+    venue:   _event.venue,  tickets: _tickets, total: totalStr
+  });
+}
+
+function sendAdminNotifications(b) {
+  var ADMIN = '917411038339';
+
+  // Build WhatsApp message with proper emojis
+  var e = [
+    '\uD83C\uDF89', // 🎉
+    '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500',
+    '\uD83D\uDCE6', // 📦
+    '\uD83D\uDC64', // 👤
+    '\uD83D\uDCE7', // 📧
+    '\uD83D\uDCF1', // 📱
+    '\uD83C\uDFAB', // 🎫
+    '\uD83D\uDCC5', // 📅
+    '\uD83D\uDCCD', // 📍
+    '\uD83C\uDFAB', // 🎫 (tickets)
+    '\uD83D\uDCB0', // 💰
+    '\u2705'        // ✅
+  ];
+
+  var waMsg =
+    e[0] + ' *NEW BOOKING \u2014 MANASA Events*\n' +
+    e[1] + '\n' +
+    e[2] + ' *Order ID:* '  + b.orderId + '\n' +
+    e[3] + ' *Name:* '      + b.name    + '\n' +
+    e[4] + ' *Email:* '     + b.email   + '\n' +
+    e[5] + ' *Phone:* '     + b.phone   + '\n' +
+    e[6] + ' *Event:* '     + b.event   + '\n' +
+    e[7] + ' *Date:* '      + b.date    + ' \u00b7 ' + b.time + '\n' +
+    e[8] + ' *Venue:* '     + b.venue   + '\n' +
+    e[9] + ' *Tickets:* '   + b.tickets + '\n' +
+    e[10]+ ' *Total:* '     + b.total   + '\n' +
+    e[1] + '\n' +
+    e[11]+ ' Status: CONFIRMED';
+
+  var smsMsg =
+    'NEW BOOKING - MANASA Events\n' +
+    'Order: '   + b.orderId + '\n' +
+    'Name: '    + b.name    + '\n' +
+    'Phone: '   + b.phone   + '\n' +
+    'Event: '   + b.event   + '\n' +
+    'Date: '    + b.date    + ' ' + b.time + '\n' +
+    'Venue: '   + b.venue   + '\n' +
+    'Tickets: ' + b.tickets + '\n' +
+    'Total: '   + b.total   + '\n' +
+    'Status: CONFIRMED';
+
+  var waUrl  = 'https://wa.me/' + ADMIN + '?text=' + encodeURIComponent(waMsg);
+  var smsUrl = 'sms:+' + ADMIN + '?body=' + encodeURIComponent(smsMsg);
+
+  // Wire fallback links
+  document.getElementById('waFallbackLink').href  = waUrl;
+  document.getElementById('smsFallbackLink').href = smsUrl;
+  document.getElementById('notifyBanner').style.display = 'block';
+
+  // 1) Open WhatsApp immediately
+  window.open(waUrl, '_blank');
+
+  // 2) Open SMS 2.5s later
+  setTimeout(function(){
+    window.location.href = smsUrl;
+  }, 2500);
+}
+
+function row(label, value) {
+  return '<div class="confirm-row"><span>' + label + '</span><span>' + value + '</span></div>';
+}
+</script>
+</body>
+</html>

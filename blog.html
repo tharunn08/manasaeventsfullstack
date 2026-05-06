@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog – MANASA Events</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+.blog-hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:80px 24px 48px;text-align:center;position:relative;overflow:hidden}
+.blog-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(255,92,53,.12) 0%,transparent 70%);pointer-events:none}
+.blog-hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.blog-hero-inner h1{font-size:clamp(28px,5vw,48px);margin-bottom:12px}
+.blog-hero-inner p{color:var(--text-muted);font-size:17px;margin-bottom:28px}
+.blog-search-bar{display:flex;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;max-width:520px;margin:0 auto;transition:border-color .2s}
+.blog-search-bar:focus-within{border-color:var(--accent)}
+.blog-search-bar input{flex:1;background:none;border:none;padding:14px 18px;color:var(--text);font-family:var(--font-body);font-size:15px;outline:none}
+.blog-search-bar button{background:var(--accent);border:none;color:#fff;padding:0 22px;cursor:pointer;font-size:15px;transition:background .2s}
+.blog-search-bar button:hover{background:#e0451f}
+.blog-cat-tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+.blog-cat-tab{padding:7px 18px;border-radius:50px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--font-body)}
+.blog-cat-tab:hover,.blog-cat-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.blog-page-layout{max-width:1200px;margin:0 auto;padding:40px 24px;display:grid;grid-template-columns:1fr 320px;gap:40px;align-items:start}
+.blog-featured{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:32px;display:grid;grid-template-columns:1.2fr 1fr;cursor:pointer;transition:transform .25s,box-shadow .25s;text-decoration:none;color:inherit}
+.blog-featured:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,.25)}
+.blog-featured-img{min-height:300px;display:flex;align-items:center;justify-content:center;font-size:72px}
+.blog-featured-body{padding:32px;display:flex;flex-direction:column;justify-content:center}
+.blog-featured-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,92,53,.12);color:var(--accent);border-radius:50px;padding:4px 12px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;width:fit-content}
+.blog-featured-body h2{font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.3;margin-bottom:12px}
+.blog-featured-body p{color:var(--text-muted);font-size:14px;line-height:1.7;margin-bottom:20px}
+.blog-featured-meta{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.author-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.author-name{font-size:13px;font-weight:600}
+.date-read{font-size:12px;color:var(--text-dim)}
+.blog-results-info{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px}
+.blog-results-info span{font-size:14px;color:var(--text-muted)}
+.blog-sort-select{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 12px;font-size:13px;font-family:var(--font-body);cursor:pointer;outline:none}
+.blog-main-list{display:flex;flex-direction:column;gap:20px}
+.blog-list-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;cursor:pointer;transition:transform .25s,box-shadow .25s;text-decoration:none;color:inherit}
+.blog-list-card:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,0,0,.2)}
+.blog-list-img{width:200px;min-height:160px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:48px;position:relative}
+.read-time-badge{position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);color:#fff;border-radius:50px;font-size:11px;font-weight:600;padding:3px 10px}
+.blog-list-body{padding:22px 24px;flex:1;display:flex;flex-direction:column}
+.blog-list-body .top-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.blog-cat-sm{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:50px;background:rgba(255,92,53,.12);color:var(--accent)}
+.blog-list-body h3{font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:8px;line-height:1.35}
+.blog-list-body p{color:var(--text-muted);font-size:13.5px;line-height:1.7;flex:1;margin-bottom:14px}
+.blog-list-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.blog-meta{font-size:12px;color:var(--text-dim)}
+.blog-read-more{font-size:13px;color:var(--accent);font-weight:700;display:flex;align-items:center;gap:4px;transition:gap .2s}
+.blog-list-card:hover .blog-read-more{gap:8px}
+.blog-empty{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.blog-empty i{font-size:40px;color:var(--text-dim);margin-bottom:14px;display:block}
+.blog-empty h3{font-family:var(--font-display);margin-bottom:8px}
+.blog-sidebar{position:sticky;top:90px;display:flex;flex-direction:column;gap:20px}
+.sidebar-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.sidebar-panel h4{font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.sidebar-cat-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;font-size:14px;transition:color .15s}
+.sidebar-cat-item:last-child{border-bottom:none}
+.sidebar-cat-item:hover,.sidebar-cat-item.active{color:var(--accent)}
+.sidebar-cat-count{font-size:12px;color:var(--text-dim);background:var(--surface2);padding:2px 9px;border-radius:50px}
+.popular-post{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:transform .2s;text-decoration:none;color:inherit}
+.popular-post:last-child{border-bottom:none}
+.popular-post:hover{transform:translateX(3px)}
+.popular-post-num{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--border);line-height:1;flex-shrink:0;width:28px}
+.popular-post-title{font-size:13px;font-weight:600;line-height:1.4;margin-bottom:3px}
+.popular-post-meta{font-size:11px;color:var(--text-dim)}
+.tag-cloud{display:flex;flex-wrap:wrap;gap:8px}
+.tag{padding:5px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:50px;font-size:12px;font-weight:500;cursor:pointer;transition:all .18s;color:var(--text-muted)}
+.tag:hover,.tag.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.newsletter-panel{background:linear-gradient(135deg,rgba(255,92,53,.1),rgba(168,85,247,.1));border-color:rgba(255,92,53,.25)!important}
+.pagination{display:flex;gap:6px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+.page-btn{width:38px;height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;transition:all .18s;font-family:var(--font-body);display:flex;align-items:center;justify-content:center}
+.page-btn:hover{border-color:var(--accent);color:var(--accent)}
+.page-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.page-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:900px){.blog-page-layout{grid-template-columns:1fr}.blog-sidebar{position:static}.blog-featured{grid-template-columns:1fr}.blog-featured-img{min-height:200px}}
+@media(max-width:640px){.blog-list-card{flex-direction:column}.blog-list-img{width:100%;min-height:140px}}
+</style>
+</head>
+<body>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="organizer.html">Organizers</a></li>
+      <li><a href="blog.html" class="active">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="login.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="organizer.html">Organizers</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html" class="btn-primary" style="display:inline-block;margin-top:12px">Get Started</a>
+  </div>
+</nav>
+
+<div class="blog-hero">
+  <div class="blog-hero-inner">
+    <div class="section-tag">&#128240; MANASA Blog</div>
+    <h1>Stories, Guides &amp; Updates</h1>
+    <p>City guides, event highlights, and everything happening in Bengaluru.</p>
+    <div class="blog-search-bar">
+      <input type="text" placeholder="Search articles, topics, authors&#8230;" id="blogSearchInput" oninput="onSearchInput()">
+      <button onclick="runSearch()"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="blog-cat-tabs" id="catTabs">
+      <button class="blog-cat-tab active" data-cat="all" onclick="selectCat('all',this)">All</button>
+      <button class="blog-cat-tab" data-cat="City Guide" onclick="selectCat('City Guide',this)">&#127961; City Guide</button>
+      <button class="blog-cat-tab" data-cat="Music" onclick="selectCat('Music',this)">&#127925; Music</button>
+      <button class="blog-cat-tab" data-cat="Tech" onclick="selectCat('Tech',this)">&#128187; Tech</button>
+      <button class="blog-cat-tab" data-cat="Food &amp; Drink" onclick="selectCat('Food &amp; Drink',this)">&#127772; Food</button>
+      <button class="blog-cat-tab" data-cat="Wellness" onclick="selectCat('Wellness',this)">&#129376; Wellness</button>
+      <button class="blog-cat-tab" data-cat="Comedy" onclick="selectCat('Comedy',this)">&#128514; Comedy</button>
+      <button class="blog-cat-tab" data-cat="Sports" onclick="selectCat('Sports',this)">&#127939; Sports</button>
+      <button class="blog-cat-tab" data-cat="Art &amp; Culture" onclick="selectCat('Art &amp; Culture',this)">&#127912; Art</button>
+    </div>
+  </div>
+</div>
+
+<div class="blog-page-layout">
+  <main>
+    <div id="featuredPost"></div>
+    <div class="blog-results-info">
+      <span id="blogResultsInfo">Showing all posts</span>
+      <select class="blog-sort-select" id="blogSort" onchange="applyBlogFilters()">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="popular">Most Popular</option>
+        <option value="read-short">Shortest Read</option>
+      </select>
+    </div>
+    <div class="blog-main-list" id="blogList"></div>
+    <div class="pagination" id="blogPagination"></div>
+  </main>
+
+  <aside class="blog-sidebar">
+    <div class="sidebar-panel">
+      <h4><i class="fas fa-search" style="color:var(--accent);margin-right:8px"></i>Quick Search</h4>
+      <div class="blog-search-bar" style="margin:0;max-width:100%">
+        <input type="text" placeholder="Search articles&#8230;" id="sidebarSearch" oninput="syncSearch('sidebarSearch')">
+        <button onclick="runSearch()"><i class="fas fa-search"></i></button>
+      </div>
+    </div>
+    <div class="sidebar-panel">
+      <h4><i class="fas fa-folder" style="color:var(--accent);margin-right:8px"></i>Categories</h4>
+      <div id="sidebarCats"></div>
+    </div>
+    <div class="sidebar-panel">
+      <h4><i class="fas fa-fire" style="color:var(--accent);margin-right:8px"></i>Popular Posts</h4>
+      <div id="popularPosts"></div>
+    </div>
+    <div class="sidebar-panel">
+      <h4><i class="fas fa-tags" style="color:var(--accent);margin-right:8px"></i>Tags</h4>
+      <div class="tag-cloud" id="tagCloud"></div>
+    </div>
+    <div class="sidebar-panel newsletter-panel">
+      <h4>&#128236; Newsletter</h4>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;line-height:1.6">Get the best Bengaluru events &amp; stories in your inbox every Friday.</p>
+      <input type="email" class="form-input" placeholder="your@email.com" id="newsletterEmail" style="margin-bottom:10px;width:100%;box-sizing:border-box">
+      <button class="btn-primary" style="width:100%;justify-content:center" onclick="subscribeNewsletter()">
+        <i class="fas fa-paper-plane" style="margin-right:8px"></i>Subscribe Free
+      </button>
+    </div>
+  </aside>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+      <p>Bengaluru's premier event discovery &amp; ticketing platform.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="events.html">Browse Events</a>
+      <a href="organizer.html">Organizers</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p><i class="fas fa-phone"></i> 7411038339</p>
+      <p><i class="fas fa-map-marker-alt"></i> <a href="https://share.google/alKB1wMb4D0Hpw6tw" target="_blank">View on Map</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom"><p>&copy; 2025 MANASA. All rights reserved.</p></div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+var BLOG_POSTS=[
+  {id:1,featured:true,cat:"City Guide",title:"Top 10 Things to Do in Bengaluru This Weekend",excerpt:"From sunrise treks at Nandi Hills to underground jazz bars in Indiranagar — your ultimate weekend planner for Bengaluru's most exciting experiences.",date:"2025-03-22",read:5,views:8420,emoji:"🏙️",gradient:"linear-gradient(135deg,#f97316,#ef4444)",author:"Kavya Sharma",authorBg:"#f97316",tags:["Weekend","Bengaluru","Guide"]},
+  {id:2,cat:"Tech",title:"Bengaluru's Biggest Hackathon Season is Here — What You Need to Know",excerpt:"April through June is hackathon season in Bengaluru. We've rounded up the 12 most competitive and rewarding tech challenges across the city.",date:"2025-03-18",read:4,views:5103,emoji:"💻",gradient:"linear-gradient(135deg,#8b5cf6,#3b82f6)",author:"Rahul Verma",authorBg:"#8b5cf6",tags:["Tech","Hackathon","Startups"]},
+  {id:3,cat:"Food & Drink",title:"Street Food Festivals You Absolutely Cannot Miss in April",excerpt:"Bengaluru's street food scene is exploding. From South Indian classics to experimental fusion, here are the top food festivals worth clearing your calendar for.",date:"2025-03-15",read:3,views:7215,emoji:"🍜",gradient:"linear-gradient(135deg,#10b981,#06b6d4)",author:"Deepa Nair",authorBg:"#10b981",tags:["Food","Festivals","Bengaluru"]},
+  {id:4,cat:"Music",title:"Inside the Thriving Indie Music Scene of South Bengaluru",excerpt:"South Bengaluru has quietly become the city's indie music heartbeat. We went behind the scenes at five venues defining the sound of the city.",date:"2025-03-10",read:6,views:4380,emoji:"🎵",gradient:"linear-gradient(135deg,#ec4899,#a855f7)",author:"Arjun Menon",authorBg:"#ec4899",tags:["Music","Indie","Nightlife"]},
+  {id:5,cat:"Wellness",title:"5 Sunrise Yoga Spots in Bengaluru That Will Transform Your Mornings",excerpt:"Bengaluru's parks and gardens offer stunning backdrops for morning wellness routines. Here are five spots where you can practice yoga as the city wakes up.",date:"2025-03-05",read:4,views:3190,emoji:"🧘",gradient:"linear-gradient(135deg,#06d6a0,#10b981)",author:"Sneha Reddy",authorBg:"#06d6a0",tags:["Wellness","Yoga","Morning"]},
+  {id:6,cat:"Comedy",title:"The Best Stand-Up Comedy Nights in Bengaluru Right Now",excerpt:"Bengaluru has one of India's most vibrant stand-up comedy circuits. From seasoned acts to open mic nights, here's where to catch the laughs.",date:"2025-02-28",read:3,views:6024,emoji:"😂",gradient:"linear-gradient(135deg,#fbbf24,#f97316)",author:"Karan Johari",authorBg:"#fbbf24",tags:["Comedy","Nightlife","Entertainment"]},
+  {id:7,cat:"Sports",title:"The Complete Guide to Running Events in Bengaluru 2025",excerpt:"From 5K fun runs to full marathons — Bengaluru has become India's running capital. Here's your complete guide to every race happening this year.",date:"2025-02-22",read:7,views:5801,emoji:"🏃",gradient:"linear-gradient(135deg,#ef4444,#f97316)",author:"Vikram Das",authorBg:"#ef4444",tags:["Sports","Running","Fitness"]},
+  {id:8,cat:"Art & Culture",title:"Bengaluru's Hidden Art Galleries Worth Your Weekend",excerpt:"Beyond the mainstream exhibitions, Bengaluru hides dozens of intimate galleries and artist studios. We explored the city's underground art scene so you don't have to.",date:"2025-02-18",read:5,views:2870,emoji:"🎨",gradient:"linear-gradient(135deg,#a855f7,#6366f1)",author:"Ananya Krishnan",authorBg:"#a855f7",tags:["Art","Culture","Gallery"]},
+  {id:9,cat:"Tech",title:"AI & ML Meetups in Bengaluru: Where to Network in 2025",excerpt:"The Silicon Valley of India has a thriving AI community. Here's where the smartest minds in machine learning meet, debate, and collaborate every month.",date:"2025-02-14",read:5,views:4950,emoji:"🤖",gradient:"linear-gradient(135deg,#6366f1,#8b5cf6)",author:"Rahul Verma",authorBg:"#6366f1",tags:["AI","Tech","Networking"]},
+  {id:10,cat:"Food & Drink",title:"Craft Beer Revolution: The Best Taprooms in Bengaluru",excerpt:"Bengaluru's craft beer scene has exploded in the last three years. We visited 15 taprooms and ranked the best ones for your next evening out.",date:"2025-02-10",read:4,views:8930,emoji:"🍺",gradient:"linear-gradient(135deg,#f59e0b,#ef4444)",author:"Siddharth Kumar",authorBg:"#f59e0b",tags:["Food","Beer","Nightlife"]},
+  {id:11,cat:"City Guide",title:"The Perfect Day Trip from Bengaluru: 8 Destinations Within 3 Hours",excerpt:"Escape the city without a week off. These eight destinations are close enough for a day trip but feel worlds away from Bengaluru's hustle.",date:"2025-02-05",read:6,views:11240,emoji:"🗺️",gradient:"linear-gradient(135deg,#0ea5e9,#3b82f6)",author:"Kavya Sharma",authorBg:"#0ea5e9",tags:["Travel","Day Trip","Bengaluru"]},
+  {id:12,cat:"Wellness",title:"Mental Wellness Events and Communities Growing in Bengaluru",excerpt:"A quiet revolution in mental health awareness is happening in Bengaluru's event spaces — from mindfulness workshops to peer support circles.",date:"2025-01-28",read:5,views:3410,emoji:"💚",gradient:"linear-gradient(135deg,#10b981,#6366f1)",author:"Meena Pillai",authorBg:"#10b981",tags:["Wellness","Mental Health","Community"]},
+  {id:13,cat:"Music",title:"Carnatic to EDM: How Bengaluru Bridges Classical and Contemporary",excerpt:"No city in India has a music scene as eclectic as Bengaluru. We trace how the city seamlessly bridges Carnatic traditions with electronic beats and indie rock.",date:"2025-01-20",read:8,views:2950,emoji:"🎶",gradient:"linear-gradient(135deg,#dc2626,#f59e0b)",author:"Arjun Menon",authorBg:"#dc2626",tags:["Music","Carnatic","Culture"]},
+  {id:14,cat:"Comedy",title:"Open Mic Night Guide: How to Find (and Crush) Your First Set",excerpt:"Thinking about getting on stage? Bengaluru's open mic circuit is one of the most welcoming in the country. Here's everything you need to know.",date:"2025-01-15",read:4,views:4210,emoji:"🎤",gradient:"linear-gradient(135deg,#fbbf24,#ec4899)",author:"Karan Johari",authorBg:"#ec4899",tags:["Comedy","Open Mic","Beginner"]},
+  {id:15,cat:"Art & Culture",title:"Bengaluru Theatre Revival: Shows You Must Watch This Quarter",excerpt:"Bengaluru's theatre scene is experiencing a golden age. From experimental performances to classic adaptations, these are the productions lighting up city stages.",date:"2025-01-08",read:5,views:1980,emoji:"🎭",gradient:"linear-gradient(135deg,#8b5cf6,#ec4899)",author:"Ananya Krishnan",authorBg:"#8b5cf6",tags:["Theatre","Art","Culture"]},
+  {id:16,cat:"Sports",title:"Bengaluru FC Season Review & What's Next for the Club",excerpt:"Another rollercoaster ISL season for Bengaluru FC. We break down the highs, the lows, and what fans can expect in the next campaign.",date:"2024-12-30",read:7,views:6750,emoji:"⚽",gradient:"linear-gradient(135deg,#3b82f6,#0ea5e9)",author:"Vikram Das",authorBg:"#3b82f6",tags:["Sports","Football","Bengaluru FC"]},
+  {id:17,cat:"City Guide",title:"The Ultimate Koramangala Neighbourhood Guide for 2025",excerpt:"Koramangala is Bengaluru's most dynamic neighbourhood. Startups, cafes, live music, rooftop bars — here's everything worth knowing about the city's beating heart.",date:"2024-12-22",read:6,views:9400,emoji:"🌆",gradient:"linear-gradient(135deg,#f97316,#a855f7)",author:"Kavya Sharma",authorBg:"#a855f7",tags:["City Guide","Koramangala","Bengaluru"]},
+  {id:18,cat:"Tech",title:"From Startup to Unicorn: Bengaluru's Founder Stories of 2024",excerpt:"2024 was a landmark year for Bengaluru's startup ecosystem. We sat down with five founders who made the leap from garage to global stage.",date:"2024-12-15",read:9,views:7200,emoji:"🚀",gradient:"linear-gradient(135deg,#6366f1,#10b981)",author:"Rahul Verma",authorBg:"#6366f1",tags:["Tech","Startups","Founders"]}
+];
+
+var POSTS_PER_PAGE=6,currentPage=1,activeCategory='all',searchQuery='',filteredPosts=[];
+
+function getCatCounts(){var c={};BLOG_POSTS.forEach(function(p){c[p.cat]=(c[p.cat]||0)+1;});return c;}
+
+function applyBlogFilters(){
+  var s=document.getElementById('blogSort').value;
+  filteredPosts=BLOG_POSTS.filter(function(p){
+    var matchCat=activeCategory==='all'||p.cat===activeCategory;
+    var q=searchQuery.toLowerCase().trim();
+    var matchQ=!q||p.title.toLowerCase().includes(q)||p.excerpt.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q)||p.author.toLowerCase().includes(q)||(p.tags||[]).some(function(t){return t.toLowerCase().includes(q);});
+    return matchCat&&matchQ;
+  });
+  if(s==='newest')filteredPosts.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+  else if(s==='oldest')filteredPosts.sort(function(a,b){return new Date(a.date)-new Date(b.date);});
+  else if(s==='popular')filteredPosts.sort(function(a,b){return b.views-a.views;});
+  else if(s==='read-short')filteredPosts.sort(function(a,b){return a.read-b.read;});
+  currentPage=1;
+  renderBlog();
+}
+
+function renderBlog(){renderFeatured();renderList();renderPagination();updateResultsInfo();}
+
+function renderFeatured(){
+  var fp=document.getElementById('featuredPost');
+  if(activeCategory!=='all'||searchQuery||currentPage>1){fp.innerHTML='';return;}
+  var f=BLOG_POSTS.find(function(p){return p.featured;});
+  if(!f){fp.innerHTML='';return;}
+  fp.innerHTML='<a class="blog-featured" href="blog-detail.html?id='+f.id+'">'
+    +'<div class="blog-featured-img" style="background:'+f.gradient+'">'+f.emoji+'</div>'
+    +'<div class="blog-featured-body">'
+    +'<div class="blog-featured-badge"><i class="fas fa-star" style="font-size:10px"></i> Featured Post</div>'
+    +'<span class="blog-cat-sm" style="margin-bottom:10px;display:inline-block">'+f.cat+'</span>'
+    +'<h2>'+f.title+'</h2>'
+    +'<p>'+f.excerpt+'</p>'
+    +'<div class="blog-featured-meta">'
+    +'<div class="author-av" style="background:'+f.authorBg+'">'+f.author[0]+'</div>'
+    +'<div><div class="author-name">'+f.author+'</div><div class="date-read">'+formatBlogDate(f.date)+' &middot; '+f.read+' min read</div></div>'
+    +'<span style="margin-left:auto;color:var(--accent);font-weight:700;font-size:13px">Read Article &rarr;</span>'
+    +'</div></div></a>';
+}
+
+function renderList(){
+  var list=document.getElementById('blogList');
+  var start=(currentPage-1)*POSTS_PER_PAGE;
+  var page=filteredPosts.slice(start,start+POSTS_PER_PAGE);
+  if(!filteredPosts.length){
+    list.innerHTML='<div class="blog-empty"><i class="fas fa-search"></i><h3>No articles found</h3><p>Try a different search term or browse another category.</p><button class="btn-primary" style="margin-top:16px" onclick="clearBlogFilters()">Clear Filters</button></div>';
+    return;
+  }
+  list.innerHTML=page.map(function(p){
+    return '<a class="blog-list-card" href="blog-detail.html?id='+p.id+'">'
+      +'<div class="blog-list-img" style="background:'+p.gradient+'">'+p.emoji
+      +'<span class="read-time-badge"><i class="fas fa-clock" style="margin-right:4px"></i>'+p.read+' min</span></div>'
+      +'<div class="blog-list-body">'
+      +'<div class="top-row"><span class="blog-cat-sm">'+p.cat+'</span>'
+      +'<span style="font-size:11px;color:var(--text-dim)">'+formatBlogDate(p.date)+'</span></div>'
+      +'<h3>'+p.title+'</h3>'
+      +'<p>'+p.excerpt+'</p>'
+      +'<div class="blog-list-footer">'
+      +'<div style="display:flex;align-items:center;gap:8px">'
+      +'<div style="width:26px;height:26px;border-radius:50%;background:'+p.authorBg+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">'+p.author[0]+'</div>'
+      +'<span style="font-size:12px;font-weight:600">'+p.author+'</span>'
+      +'<span class="blog-meta">&middot; '+p.views.toLocaleString('en-IN')+' views</span>'
+      +'</div>'
+      +'<span class="blog-read-more">Read More <i class="fas fa-arrow-right" style="font-size:11px"></i></span>'
+      +'</div></div></a>';
+  }).join('');
+}
+
+function renderPagination(){
+  var total=Math.ceil(filteredPosts.length/POSTS_PER_PAGE);
+  var pg=document.getElementById('blogPagination');
+  if(total<=1){pg.innerHTML='';return;}
+  var html='<button class="page-btn" onclick="goPage('+(currentPage-1)+')" '+(currentPage===1?'disabled':'')+'><i class="fas fa-chevron-left"></i></button>';
+  for(var i=1;i<=total;i++){
+    if(total>7&&i>2&&i<total-1&&Math.abs(i-currentPage)>1){
+      if(i===3||i===total-2)html+='<button class="page-btn" disabled style="border:none;background:none">&hellip;</button>';
+      continue;
+    }
+    html+='<button class="page-btn '+(i===currentPage?'active':'')+'" onclick="goPage('+i+')">'+i+'</button>';
+  }
+  html+='<button class="page-btn" onclick="goPage('+(currentPage+1)+')" '+(currentPage===total?'disabled':'')+'><i class="fas fa-chevron-right"></i></button>';
+  pg.innerHTML=html;
+}
+
+function goPage(n){
+  var total=Math.ceil(filteredPosts.length/POSTS_PER_PAGE);
+  if(n<1||n>total)return;
+  currentPage=n;renderBlog();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateResultsInfo(){
+  var el=document.getElementById('blogResultsInfo');
+  var total=filteredPosts.length;
+  var start=(currentPage-1)*POSTS_PER_PAGE+1;
+  var end=Math.min(currentPage*POSTS_PER_PAGE,total);
+  if(!total)el.textContent='No posts found';
+  else if(total<=POSTS_PER_PAGE)el.textContent='Showing '+total+' post'+(total!==1?'s':'');
+  else el.textContent='Showing '+start+'–'+end+' of '+total+' posts';
+}
+
+function renderSidebarCats(){
+  var counts=getCatCounts();
+  var cats=Object.entries(counts).sort(function(a,b){return b[1]-a[1];});
+  var el=document.getElementById('sidebarCats');
+  var html='<div class="sidebar-cat-item '+(activeCategory==='all'?'active':'')+'" onclick="selectCat(\'all\')">'
+    +'<span>All Posts</span><span class="sidebar-cat-count">'+BLOG_POSTS.length+'</span></div>';
+  cats.forEach(function(c){
+    html+='<div class="sidebar-cat-item '+(activeCategory===c[0]?'active':'')+'" onclick="selectCat(\''+c[0]+'\')">'
+      +'<span>'+c[0]+'</span><span class="sidebar-cat-count">'+c[1]+'</span></div>';
+  });
+  el.innerHTML=html;
+}
+
+function renderPopularPosts(){
+  var sorted=[].concat(BLOG_POSTS).sort(function(a,b){return b.views-a.views;}).slice(0,4);
+  document.getElementById('popularPosts').innerHTML=sorted.map(function(p,i){
+    return '<a class="popular-post" href="blog-detail.html?id='+p.id+'">'
+      +'<div class="popular-post-num">0'+(i+1)+'</div>'
+      +'<div><div class="popular-post-title">'+p.title+'</div>'
+      +'<div class="popular-post-meta">'+formatBlogDate(p.date)+' &middot; '+p.views.toLocaleString('en-IN')+' views</div>'
+      +'</div></a>';
+  }).join('');
+}
+
+function renderTagCloud(){
+  var allTags=[...new Set(BLOG_POSTS.flatMap(function(p){return p.tags||[];}))];
+  document.getElementById('tagCloud').innerHTML=allTags.map(function(t){
+    return '<span class="tag" onclick="searchByTag(\''+t+'\')">'+t+'</span>';
+  }).join('');
+}
+
+function selectCat(cat,btn){
+  activeCategory=cat;
+  document.querySelectorAll('.blog-cat-tab').forEach(function(b){b.classList.toggle('active',b.dataset.cat===cat);});
+  searchQuery='';
+  document.getElementById('blogSearchInput').value='';
+  document.getElementById('sidebarSearch').value='';
+  renderSidebarCats();
+  applyBlogFilters();
+}
+
+function onSearchInput(){
+  searchQuery=document.getElementById('blogSearchInput').value;
+  document.getElementById('sidebarSearch').value=searchQuery;
+  activeCategory='all';
+  document.querySelectorAll('.blog-cat-tab').forEach(function(b){b.classList.toggle('active',b.dataset.cat==='all');});
+  renderSidebarCats();
+  applyBlogFilters();
+}
+
+function syncSearch(sourceId){
+  searchQuery=document.getElementById(sourceId).value;
+  var otherId=sourceId==='blogSearchInput'?'sidebarSearch':'blogSearchInput';
+  document.getElementById(otherId).value=searchQuery;
+  activeCategory='all';
+  document.querySelectorAll('.blog-cat-tab').forEach(function(b){b.classList.toggle('active',b.dataset.cat==='all');});
+  renderSidebarCats();applyBlogFilters();
+}
+
+function runSearch(){
+  searchQuery=document.getElementById('blogSearchInput').value||document.getElementById('sidebarSearch').value;
+  activeCategory='all';
+  document.querySelectorAll('.blog-cat-tab').forEach(function(b){b.classList.toggle('active',b.dataset.cat==='all');});
+  renderSidebarCats();applyBlogFilters();
+}
+
+function searchByTag(tag){
+  searchQuery=tag;
+  document.getElementById('blogSearchInput').value=tag;
+  document.getElementById('sidebarSearch').value=tag;
+  activeCategory='all';
+  document.querySelectorAll('.blog-cat-tab').forEach(function(b){b.classList.toggle('active',b.dataset.cat==='all');});
+  document.querySelectorAll('.tag').forEach(function(t){t.classList.toggle('active',t.textContent===tag);});
+  renderSidebarCats();applyBlogFilters();
+}
+
+function clearBlogFilters(){
+  activeCategory='all';searchQuery='';
+  document.getElementById('blogSearchInput').value='';
+  document.getElementById('sidebarSearch').value='';
+  document.querySelectorAll('.blog-cat-tab').forEach(function(b){b.classList.toggle('active',b.dataset.cat==='all');});
+  document.querySelectorAll('.tag').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('blogSort').value='newest';
+  renderSidebarCats();applyBlogFilters();
+}
+
+function formatBlogDate(d){return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}
+
+function subscribeNewsletter(){
+  var e=document.getElementById('newsletterEmail').value.trim();
+  if(!e||!e.includes('@')){showToast('Please enter a valid email address');return;}
+  showToast('Subscribed! See you in your inbox every Friday 📬');
+  document.getElementById('newsletterEmail').value='';
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var params=new URLSearchParams(window.location.search);
+  var catP=params.get('cat');var qP=params.get('q');
+  if(catP)activeCategory=catP;
+  if(qP){searchQuery=qP;document.getElementById('blogSearchInput').value=qP;}
+  renderSidebarCats();renderPopularPosts();renderTagCloud();applyBlogFilters();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact &amp; Support – MANASA</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="organizer.html">Organizers</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="login.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="organizer.html">Organizers</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html" class="btn-primary" style="display:inline-block;margin-top:12px">Get Started</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="section-tag">&#128222; We're here to help</div>
+    <h1>Contact &amp; Support</h1>
+    <p>Reach out to us anytime — we typically respond within 2 hours.</p>
+  </div>
+</div>
+
+<div class="contact-layout">
+  <!-- LEFT: Info -->
+  <div class="contact-info">
+    <h2>Let's Talk</h2>
+    <p>Whether you're an event-goer with a question, an organizer looking to partner, or just curious about MANASA — we'd love to hear from you.</p>
+
+    <!-- QUICK CONNECT BUTTONS -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin:24px 0">
+      <div class="contact-btn-action contact-btn-email" onclick="openEmail()" role="link" tabindex="0" onkeypress="if(event.key==='Enter')openEmail()">
+        <div class="cba-icon"><i class="fas fa-envelope"></i></div>
+        <div class="cba-text">
+          <span class="cba-label">Send us an Email</span>
+          <span class="cba-sub">manasakala5634@gmail.com</span>
+        </div>
+        <i class="fas fa-arrow-right cba-arrow"></i>
+      </div>
+      <div class="contact-btn-action contact-btn-phone" onclick="openPhone()" role="link" tabindex="0" onkeypress="if(event.key==='Enter')openPhone()">
+        <div class="cba-icon"><i class="fas fa-phone"></i></div>
+        <div class="cba-text">
+          <span class="cba-label">Call Us Directly</span>
+          <span class="cba-sub">+91 7411038339 &nbsp;·&nbsp; Mon–Sat, 9 AM–8 PM IST</span>
+        </div>
+        <i class="fas fa-arrow-right cba-arrow"></i>
+      </div>
+      <div class="contact-btn-action contact-btn-whatsapp" onclick="openWhatsApp()" role="link" tabindex="0" onkeypress="if(event.key==='Enter')openWhatsApp()">
+        <div class="cba-icon"><i class="fab fa-whatsapp"></i></div>
+        <div class="cba-text">
+          <span class="cba-label">Chat on WhatsApp</span>
+          <span class="cba-sub">Quick replies &nbsp;·&nbsp; Mon–Sat</span>
+        </div>
+        <i class="fas fa-arrow-right cba-arrow"></i>
+      </div>
+    </div>
+
+    <div class="contact-item">
+      <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+      <div>
+        <h4>Office Location</h4>
+        <p>Bengaluru, Karnataka</p>
+        <a href="https://share.google/alKB1wMb4D0Hpw6tw" target="_blank" style="font-size:13px;color:var(--accent);display:flex;align-items:center;gap:6px;margin-top:4px"><i class="fas fa-external-link-alt"></i> View on Google Maps</a>
+      </div>
+    </div>
+
+    <div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-top:12px">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d497695.0974759938!2d77.35073573299991!3d12.954517030611606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4fe0!2sBengaluru%2C+Karnataka!5e0!3m2!1sen!2sin!4v1690000000000"
+        width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </div>
+
+  <!-- RIGHT: Form -->
+  <div>
+    <div class="contact-form">
+      <h3>Send Us a Message</h3>
+      <div class="form-row">
+        <div class="form-field">
+          <label>First Name</label>
+          <input class="form-input" placeholder="Kavya" id="cfFirst">
+        </div>
+        <div class="form-field">
+          <label>Last Name</label>
+          <input class="form-input" placeholder="Sharma" id="cfLast">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Email Address</label>
+        <input type="email" class="form-input" placeholder="you@example.com" id="cfEmail">
+      </div>
+      <div class="form-field">
+        <label>Phone Number</label>
+        <input type="tel" class="form-input" placeholder="+91 98765 43210" id="cfPhone">
+      </div>
+      <div class="form-field">
+        <label>Topic</label>
+        <select class="filter-select form-input" id="cfTopic">
+          <option>General Inquiry</option>
+          <option>Booking Support</option>
+          <option>Organizer Partnership</option>
+          <option>Technical Issue</option>
+          <option>Refund Request</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Message</label>
+        <textarea class="form-textarea" id="cfMessage" style="min-height:130px">Hi MANASA team,
+
+I would like to get in touch regarding an inquiry. Please feel free to reach out to me at the email provided above.
+
+Looking forward to hearing from you!
+
+Best regards,</textarea>
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center;padding:16px;font-size:16px" onclick="submitContact()">
+        <i class="fas fa-paper-plane"></i> Send Message
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ SECTION -->
+<section class="section" style="background:var(--bg2)">
+  <div class="container" style="max-width:800px">
+    <div class="section-header">
+      <div class="section-tag">&#10067; FAQs</div>
+      <h2>Frequently Asked Questions</h2>
+    </div>
+    <div id="faqList"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+      <p>Bengaluru's premier event discovery &amp; ticketing platform.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="events.html">Browse Events</a>
+      <a href="organizer.html">Organizers</a>
+      <a href="blog.html">Blog</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p><i class="fas fa-phone"></i> 7411038339</p>
+      <p><i class="fas fa-map-marker-alt"></i><a href="https://share.google/alKB1wMb4D0Hpw6tw" target="_blank"> View on Map</a></p>
+      <p><i class="fas fa-envelope"></i> manasakala5634@gmail.com</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 MANASA. All rights reserved.</p>
+    <div class="footer-bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+var FAQS = [
+  ['How do I book tickets on MANASA?', 'Simply browse or search for an event, click "Book Now" on the event page, choose your ticket quantity, and complete the payment. You\'ll receive a digital ticket with a QR code via email.'],
+  ['Can I get a refund if I cancel?', 'Refund policies vary by event. Most events allow refunds up to 48 hours before the event. Check the individual event\'s refund policy on the event detail page.'],
+  ['How do I become an event organizer?', 'Click "Get Started" or visit the Organizer Dashboard. You\'ll need to create an account, verify your identity, and then you can start creating events immediately.'],
+  ['What payment methods are accepted?', 'We accept UPI (GPay, PhonePe, Paytm), credit/debit cards (Visa, Mastercard, RuPay), net banking, and popular digital wallets.'],
+  ['Is my ticket transferable?', 'Most tickets are non-transferable unless the organizer has enabled ticket transfers. Check the event details or contact us for specific events.'],
+  ['How do I contact the event organizer?', 'Each event detail page has an "Organizer Info" section. You can also reach MANASA support at 7411038339 for assistance.'],
+  ['Are there any service fees?', 'MANASA charges a small platform fee (typically 2–5%) on paid events. This is shown clearly at checkout before you complete your booking.']
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('faqList').innerHTML = FAQS.map(function(faq) {
+    return '<div class="faq-item" onclick="toggleFaq(this)">'
+      + '<div class="faq-q">' + faq[0] + ' <i class="fas fa-chevron-down faq-chevron"></i></div>'
+      + '<div class="faq-a">' + faq[1] + '</div>'
+      + '</div>';
+  }).join('');
+});
+
+function toggleFaq(el) {
+  el.classList.toggle('open');
+}
+
+function openEmail() {
+  window.location.href = 'mailto:manasakala5634@gmail.com';
+  setTimeout(function() {
+    // If mailto didn't open after 1s, copy to clipboard as fallback
+  }, 1000);
+}
+
+function openPhone() {
+  window.location.href = 'tel:+917411038339';
+}
+
+function openWhatsApp() {
+  window.open('https://wa.me/917411038339?text=Hi%20MANASA%2C%20I%20have%20an%20inquiry%20about%20your%20events.', '_blank');
+}
+
+function submitContact() {
+  var firstName = document.getElementById('cfFirst').value.trim();
+  var lastName = document.getElementById('cfLast').value.trim();
+  var email = document.getElementById('cfEmail').value.trim();
+  var phone = document.getElementById('cfPhone').value.trim();
+  var topic = document.getElementById('cfTopic').value;
+  var msg = document.getElementById('cfMessage').value.trim();
+  if (!firstName || !email || !msg) { showToast('Please fill in Name, Email and Message'); return; }
+  if (!email.includes('@')) { showToast('Please enter a valid email address'); return; }
+  var subject = encodeURIComponent('[MANASA Contact] ' + topic + ' – from ' + firstName + ' ' + lastName);
+  var body = encodeURIComponent('Name: ' + firstName + ' ' + lastName + '\nEmail: ' + email + '\nPhone: ' + (phone||'Not provided') + '\nTopic: ' + topic + '\n\nMessage:\n' + msg);
+  window.location.href = 'mailto:manasakala5634@gmail.com?subject=' + subject + '&body=' + body;
+  showToast('Opening email client... Message ready to send 📬');
+  document.getElementById('cfFirst').value = '';
+  document.getElementById('cfLast').value = '';
+  document.getElementById('cfEmail').value = '';
+  document.getElementById('cfPhone').value = '';
+  document.getElementById('cfMessage').value = '';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login &#8211; MANASA</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- db.js now uses REST API — no sql.js needed -->
+<style>
+  .admin-wrapper{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:100px 20px 40px}
+  .admin-card{width:100%;max-width:440px;background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,0.12)}
+  .admin-header{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:32px;text-align:center}
+  .admin-icon{width:64px;height:64px;background:rgba(255,92,53,0.15);border:1px solid rgba(255,92,53,0.4);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+  .admin-body{padding:32px}
+  .admin-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,92,53,0.1);border:1px solid rgba(255,92,53,0.3);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px}
+  #adminPanel{display:none}
+  .db-section{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px}
+  .db-section-header{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:16px 20px;display:flex;align-items:center;gap:12px}
+  .db-section-body{padding:20px;overflow-x:auto}
+  .db-tab-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+  .db-tab{padding:8px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;font-size:13px;font-weight:600;transition:.2s}
+  .db-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .db-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:24px}
+  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+  .stat-num{font-size:28px;font-weight:800;font-family:var(--font-display);color:var(--accent)}
+  .stat-label{font-size:12px;color:var(--text-muted);margin-top:4px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{padding:10px 12px;text-align:left;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;background:rgba(255,92,53,0.06)}
+  td{padding:10px 12px;border-bottom:1px solid rgba(0,0,0,0.05);color:var(--text);white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+  tr:hover td{background:rgba(0,0,0,0.025)}
+  .badge-confirmed{background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+  .badge-pending{background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+  .action-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+
+  /* ── Admin notification popups ── */
+  .admin-notif{
+    position:fixed;right:24px;
+    background:#fff;border-radius:14px;padding:16px 20px;min-width:300px;max-width:360px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.18);z-index:99999;
+    animation:slideInRight .4s cubic-bezier(.34,1.56,.64,1);
+    transition:opacity .4s,transform .4s;
+  }
+  .admin-notif.hide{opacity:0;transform:translateX(60px);pointer-events:none}
+  @keyframes slideInRight{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+  .admin-notif-close{position:absolute;top:10px;right:12px;background:none;border:none;font-size:18px;color:#888;cursor:pointer;line-height:1}
+
+  /* New-user popup – indigo */
+  #adminPopup{border:1px solid #e0e7ff;border-left:4px solid #6366f1;top:90px;display:none}
+
+  /* New-booking popup – emerald */
+  #adminBookingPopup{border:1px solid #d1fae5;border-left:4px solid #10b981;top:90px;display:none}
+
+  /* Welcome login toast – orange accent */
+  #adminWelcomeToast{
+    position:fixed;top:90px;left:50%;transform:translateX(-50%);
+    background:linear-gradient(135deg,#ff5c35,#ff8c42);color:#fff;
+    border-radius:14px;padding:14px 28px;
+    box-shadow:0 8px 32px rgba(255,92,53,0.4);z-index:99999;
+    font-size:15px;font-weight:700;text-align:center;white-space:nowrap;
+    display:none;
+    animation:popIn .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes popIn{from{opacity:0;transform:translateX(-50%) scale(.7) translateY(-20px)}to{opacity:1;transform:translateX(-50%) scale(1) translateY(0)}}
+  #adminPopupClose,.admin-notif-close{position:absolute;top:10px;right:12px;background:none;border:none;font-size:18px;color:#888;cursor:pointer;line-height:1}
+</style>
+</head>
+<body>
+
+<!-- ── WELCOME LOGIN TOAST ── -->
+<div id="adminWelcomeToast">
+  <i class="fas fa-shield-alt" style="margin-right:8px"></i>Welcome back, Admin! 👋
+</div>
+
+<!-- ── NEW USER POPUP (indigo) ── -->
+<div id="adminPopup" class="admin-notif">
+  <button class="admin-notif-close" onclick="closeAdminPopup('adminPopup')">&times;</button>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+    <div style="width:38px;height:38px;background:#e0e7ff;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i class="fas fa-user-plus" style="color:#6366f1;font-size:14px"></i>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#1a1a2e" id="adminPopupTitle">New User Registered!</div>
+      <div style="font-size:12px;color:#5a6072;margin-top:2px" id="adminPopupEmail"></div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:#9aa0b4;margin-top:4px" id="adminPopupTime"></div>
+</div>
+
+<!-- ── NEW BOOKING POPUP (emerald) ── -->
+<div id="adminBookingPopup" class="admin-notif">
+  <button class="admin-notif-close" onclick="closeAdminPopup('adminBookingPopup')">&times;</button>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+    <div style="width:38px;height:38px;background:#d1fae5;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i class="fas fa-ticket-alt" style="color:#10b981;font-size:14px"></i>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:#1a1a2e" id="adminBookingTitle">New Booking!</div>
+      <div style="font-size:12px;color:#5a6072;margin-top:2px" id="adminBookingDetail"></div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:#9aa0b4;margin-top:4px" id="adminBookingTime"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar scrolled">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <div class="nav-actions" style="margin-left:auto;display:flex;gap:10px;align-items:center">
+      <a href="index.html" class="btn-ghost">&#8592; Back to Home</a>
+      <a href="login.html" class="btn-ghost">User Login</a>
+      <button id="logoutBtn" onclick="adminLogout()" style="display:none;background:rgba(239,68,68,0.1);border:1px solid #ef4444;color:#ef4444;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- LOGIN PANEL -->
+<div id="loginPanel" class="admin-wrapper">
+  <div class="admin-card">
+    <div class="admin-header">
+      <div class="admin-icon">
+        <i class="fas fa-shield-alt" style="color:var(--accent);font-size:26px"></i>
+      </div>
+      <div class="admin-badge"><i class="fas fa-lock"></i> Admin Access</div>
+      <h2 style="font-family:var(--font-display);font-size:22px;margin:0;color:#fff">Admin Login</h2>
+      <p style="font-size:13px;color:rgba(255,255,255,0.4);margin:8px 0 0">Sign in to access the MANASA admin panel</p>
+    </div>
+    <div class="admin-body">
+      <div class="form-field">
+        <label><i class="fas fa-lock" style="color:var(--accent);margin-right:6px"></i>Admin Password</label>
+        <div style="position:relative">
+          <input type="password" id="adminPwd" class="form-input" placeholder="Enter admin password" style="padding-right:44px"
+                 onkeydown="if(event.key==='Enter') doAdminLogin()">
+          <button type="button" onclick="togglePass('adminPwd')"
+                  style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <p id="loginErr" style="font-size:12px;color:#ef4444;margin:6px 0 16px;display:none">
+        <i class="fas fa-exclamation-circle"></i> Incorrect password. Please try again.
+      </p>
+      <p style="font-size:11px;color:var(--text-dim);margin:0 0 20px">
+        First time? The password you enter will become the permanent admin password.
+      </p>
+      <button type="button" onclick="doAdminLogin()"
+              style="width:100%;background:var(--accent);border:none;color:#fff;padding:14px;border-radius:10px;cursor:pointer;font-size:15px;font-weight:700">
+        <i class="fas fa-unlock"></i> Login as Admin
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" style="max-width:1100px;margin:100px auto 60px;padding:0 20px">
+
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap">
+    <div style="width:48px;height:48px;background:rgba(255,92,53,0.15);border:1px solid rgba(255,92,53,0.3);border-radius:12px;display:flex;align-items:center;justify-content:center">
+      <i class="fas fa-database" style="color:var(--accent);font-size:20px"></i>
+    </div>
+    <div>
+      <h1 style="font-family:var(--font-display);font-size:24px;margin:0;color:var(--text)">Admin Dashboard</h1>
+      <p style="font-size:13px;color:var(--text-muted);margin:4px 0 0">SQLite Database Viewer &middot; Live updates every 15s</p>
+    </div>
+    <button onclick="refreshAll()" style="margin-left:auto;background:rgba(255,92,53,0.1);border:1px solid var(--accent);color:var(--accent);padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">
+      <i class="fas fa-sync-alt"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="db-stats">
+    <div class="stat-card"><div class="stat-num" id="statUsers">&#8212;</div><div class="stat-label">Total Users</div></div>
+    <div class="stat-card"><div class="stat-num" id="statBookings">&#8212;</div><div class="stat-label">Total Bookings</div></div>
+    <div class="stat-card"><div class="stat-num" id="statConfirmed">&#8212;</div><div class="stat-label">Confirmed</div></div>
+    <div class="stat-card"><div class="stat-num" id="statRevenue">&#8212;</div><div class="stat-label">Total Revenue</div></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="db-tab-bar">
+    <button class="db-tab active" onclick="showDBTab('bookings',this)"><i class="fas fa-ticket-alt"></i> Bookings</button>
+    <button class="db-tab" onclick="showDBTab('users',this)"><i class="fas fa-users"></i> Users</button>
+  </div>
+
+  <!-- BOOKINGS TABLE -->
+  <div id="tab-bookings" class="db-section">
+    <div class="db-section-header">
+      <i class="fas fa-ticket-alt" style="color:var(--accent);font-size:16px"></i>
+      <div>
+        <h3 style="font-family:var(--font-display);font-size:16px;margin:0;color:#fff">Booking Orders</h3>
+        <p style="font-size:11px;color:rgba(255,255,255,0.4);margin:2px 0 0">All event bookings from users</p>
+      </div>
+    </div>
+    <div class="db-section-body">
+      <div id="bookingsTableContainer"><p style="color:var(--text-muted)">Loading...</p></div>
+      <div class="action-bar">
+        <button onclick="clearAllBookings()" style="background:rgba(239,68,68,0.1);border:1px solid #ef4444;color:#ef4444;padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">
+          <i class="fas fa-trash"></i> Clear All Bookings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- USERS TABLE -->
+  <div id="tab-users" class="db-section" style="display:none">
+    <div class="db-section-header">
+      <i class="fas fa-users" style="color:var(--accent);font-size:16px"></i>
+      <div>
+        <h3 style="font-family:var(--font-display);font-size:16px;margin:0;color:#fff">Registered Users</h3>
+        <p style="font-size:11px;color:rgba(255,255,255,0.4);margin:2px 0 0">Passwords stored as SHA-256 hash</p>
+      </div>
+    </div>
+    <div class="db-section-body">
+      <div id="usersTableContainer"><p style="color:var(--text-muted)">Loading...</p></div>
+      <div class="action-bar">
+        <button onclick="clearAllUsers()" style="background:rgba(239,68,68,0.1);border:1px solid #ef4444;color:#ef4444;padding:9px 18px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">
+          <i class="fas fa-trash"></i> Clear All Users
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+<script src="db.js"></script>
+<script>
+var _lastUserCount    = -1;
+var _lastBookingCount = -1;
+
+window.addEventListener('DOMContentLoaded', async function() {
+  // Always show login form — password required every time for security
+  document.getElementById('loginPanel').style.display = 'flex';
+  document.getElementById('adminPanel').style.display = 'none';
+  await initDB().catch(function(e){ console.error('DB init failed', e); });
+});
+
+function togglePass(id) {
+  var inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+async function doAdminLogin() {
+  var pwd = document.getElementById('adminPwd').value;
+  var err = document.getElementById('loginErr');
+  err.style.display = 'none';
+  if (!pwd) { err.style.display = 'block'; return; }
+  await initDB();
+  var ok = await verifyDBPassword(pwd);
+  if (!ok) {
+    err.style.display = 'block';
+    document.getElementById('adminPwd').value = '';
+    document.getElementById('adminPwd').focus();
+    return;
+  }
+  showAdminPanel();
+}
+
+function showAdminPanel() {
+  document.getElementById('loginPanel').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+  document.getElementById('logoutBtn').style.display  = 'inline-flex';
+  _lastUserCount    = -1; // reset so first load baseline is set silently
+  _lastBookingCount = -1;
+  // Show welcome toast for 4 seconds
+  var toast = document.getElementById('adminWelcomeToast');
+  toast.style.display = 'block';
+  setTimeout(function(){ toast.style.display = 'none'; }, 4000);
+  refreshAll();
+  // Poll every 15s for live updates
+  clearInterval(window._adminPoll);
+  window._adminPoll = setInterval(refreshAll, 15000);
+}
+
+function adminLogout() {
+  clearInterval(window._adminPoll);
+  document.getElementById('loginPanel').style.display = 'flex';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('logoutBtn').style.display  = 'none';
+  document.getElementById('adminPwd').value = '';
+}
+
+function showDBTab(name, btn) {
+  document.querySelectorAll('.db-tab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('tab-bookings').style.display = name === 'bookings' ? 'block' : 'none';
+  document.getElementById('tab-users').style.display    = name === 'users'    ? 'block' : 'none';
+}
+
+async function refreshAll() {
+  await renderStats();
+  await renderBookingsTable();
+  await renderUsersTable();
+  await checkNewUsers();
+  await checkNewBookings();
+}
+
+// ── Notification helpers ────────────────────────────────────────────────────
+function closeAdminPopup(id) {
+  var el = document.getElementById(id);
+  el.classList.add('hide');
+  setTimeout(function(){ el.style.display = 'none'; el.classList.remove('hide'); }, 400);
+}
+
+function stackNotifPositions() {
+  var ids = ['adminPopup','adminBookingPopup'];
+  var top = 90;
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el.style.display !== 'none') {
+      el.style.top = top + 'px';
+      top += el.offsetHeight + 12;
+    }
+  });
+}
+
+// ── New-user notification ────────────────────────────────────────────────────
+async function checkNewUsers() {
+  var users = await dbGetAllUsers();
+  if (_lastUserCount === -1) {
+    _lastUserCount = users.length;
+    return;
+  }
+  if (users.length > _lastUserCount) {
+    var newest = users[0]; // API returns newest first
+    showNewUserPopup(newest);
+  }
+  _lastUserCount = users.length;
+}
+
+function showNewUserPopup(user) {
+  var name  = ((user.first_name||'') + ' ' + (user.last_name||'')).trim() || user.name || 'New User';
+  var email = user.email || '';
+  var time  = user.joined_at ? user.joined_at.replace('T',' ').slice(0,19) : new Date().toLocaleString('en-IN');
+  document.getElementById('adminPopupTitle').textContent = 'New user registered: ' + name;
+  document.getElementById('adminPopupEmail').textContent = email;
+  document.getElementById('adminPopupTime').textContent  = 'Joined at: ' + time;
+  var popup = document.getElementById('adminPopup');
+  popup.style.display = 'block';
+  popup.classList.remove('hide');
+  stackNotifPositions();
+  clearTimeout(window._popupTimer);
+  window._popupTimer = setTimeout(function(){ closeAdminPopup('adminPopup'); }, 8000);
+}
+
+// ── New-booking notification ─────────────────────────────────────────────────
+async function checkNewBookings() {
+  var bookings = await dbGetAllBookings();
+  if (_lastBookingCount === -1) {
+    _lastBookingCount = bookings.length;
+    return;
+  }
+  if (bookings.length > _lastBookingCount) {
+    var newest = bookings[0];
+    showNewBookingPopup(newest);
+  }
+  _lastBookingCount = bookings.length;
+}
+
+function showNewBookingPopup(booking) {
+  var name    = booking.user_name  || 'Someone';
+  var event   = booking.event_title || 'an event';
+  var tickets = booking.tickets    || 1;
+  var total   = booking.total_price ? ('₹' + parseFloat(booking.total_price).toLocaleString('en-IN')) : 'FREE';
+  var time    = booking.booked_at  ? booking.booked_at.replace('T',' ').slice(0,19) : new Date().toLocaleString('en-IN');
+  document.getElementById('adminBookingTitle').textContent  = '🎫 New Booking by ' + name;
+  document.getElementById('adminBookingDetail').textContent = event + ' · ' + tickets + ' ticket(s) · ' + total;
+  document.getElementById('adminBookingTime').textContent   = 'Booked at: ' + time;
+  var popup = document.getElementById('adminBookingPopup');
+  popup.style.display = 'block';
+  popup.classList.remove('hide');
+  stackNotifPositions();
+  clearTimeout(window._bookingPopupTimer);
+  window._bookingPopupTimer = setTimeout(function(){ closeAdminPopup('adminBookingPopup'); }, 8000);
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+async function renderStats() {
+  var users    = await dbGetAllUsers();
+  var bookings = await dbGetAllBookings();
+  var confirmed = bookings.filter(function(b){ return b.status === 'confirmed'; }).length;
+  var revenue   = bookings.filter(function(b){ return b.status === 'confirmed'; })
+                          .reduce(function(s,b){ return s + (parseFloat(b.total_price)||0); }, 0);
+  document.getElementById('statUsers').textContent     = users.length;
+  document.getElementById('statBookings').textContent  = bookings.length;
+  document.getElementById('statConfirmed').textContent = confirmed;
+  document.getElementById('statRevenue').textContent   = revenue > 0 ? '₹' + revenue.toLocaleString('en-IN') : '₹0';
+}
+
+// ── Bookings table ──────────────────────────────────────────────────────────
+async function renderBookingsTable() {
+  var bookings  = await dbGetAllBookings();
+  var container = document.getElementById('bookingsTableContainer');
+  if (!bookings.length) {
+    container.innerHTML = emptyState('No bookings yet. Users will appear here after booking an event.', 'fa-ticket-alt');
+    return;
+  }
+  var cols   = ['id','order_id','user_name','user_email','user_phone','event_title','event_date','tickets','total_price','status','booked_at'];
+  var labels = ['ID','Order ID','Name','Email','Phone','Event','Event Date','Tickets','Total','Status','Booked At'];
+  var rows = bookings.map(function(b) {
+    var cells = cols.map(function(col) {
+      var val = (b[col] !== null && b[col] !== undefined && b[col] !== '') ? String(b[col]) : '—';
+      if (col === 'status')      val = '<span class="badge-' + (b[col]||'pending') + '">' + (b[col]||'').toUpperCase() + '</span>';
+      if (col === 'total_price' && b[col]) val = '₹' + parseFloat(b[col]).toLocaleString('en-IN');
+      if (col === 'booked_at'  && b[col]) val = String(b[col]).replace('T',' ').slice(0,19);
+      return '<td title="' + (b[col]||'') + '">' + val + '</td>';
+    }).join('');
+    return '<tr>' + cells + '</tr>';
+  }).join('');
+  var ths = labels.map(function(l){ return '<th>' + l + '</th>'; }).join('');
+  container.innerHTML =
+    '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">' + bookings.length + ' booking(s) — live from shared database 🟢</p>' +
+    '<table><thead><tr>' + ths + '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+// ── Users table ──────────────────────────────────────────────────────────────
+async function renderUsersTable() {
+  var users     = await dbGetAllUsers();
+  var container = document.getElementById('usersTableContainer');
+  if (!users.length) {
+    container.innerHTML = emptyState('No users registered yet.', 'fa-users');
+    return;
+  }
+  var cols   = ['id','first_name','last_name','email','phone','provider','joined_at'];
+  var labels = ['ID','First Name','Last Name','Email','Phone','Provider','Joined At','Action'];
+  var rows = users.map(function(u) {
+    var cells = cols.map(function(col) {
+      var val = (u[col] !== null && u[col] !== undefined && u[col] !== '') ? String(u[col]) : '—';
+      if (col === 'joined_at' && u[col]) val = String(u[col]).replace('T',' ').slice(0,19);
+      return '<td title="' + (u[col]||'') + '">' + val + '</td>';
+    }).join('');
+    cells += '<td><button onclick="deleteUser(' + u.id + ')" style="background:#fee2e2;color:#dc2626;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px"><i class="fas fa-trash"></i> Delete</button></td>';
+    return '<tr>' + cells + '</tr>';
+  }).join('');
+  var ths = labels.map(function(l){ return '<th>' + l + '</th>'; }).join('');
+  container.innerHTML =
+    '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">' + users.length + ' user(s) — live from shared database 🟢</p>' +
+    '<table><thead><tr>' + ths + '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+async function deleteUser(id) {
+  if (!confirm('Delete this user?')) return;
+  await dbDeleteUser(id);
+  showToast('User deleted');
+  await renderUsersTable();
+  await renderStats();
+}
+
+function emptyState(msg, icon) {
+  return '<div style="text-align:center;padding:40px;background:rgba(0,0,0,0.02);border-radius:12px;border:1px dashed var(--border)">' +
+    '<i class="fas ' + icon + '" style="font-size:36px;color:var(--text-dim);margin-bottom:12px;display:block"></i>' +
+    '<p style="color:var(--text-muted);font-size:14px">' + msg + '</p></div>';
+}
+
+async function clearAllBookings() {
+  if (!confirm('Delete ALL booking records? This cannot be undone.')) return;
+  await dbClearBookings();
+  showToast('All bookings cleared.');
+  await refreshAll();
+}
+
+async function clearAllUsers() {
+  if (!confirm('Delete ALL user records? This cannot be undone.')) return;
+  try {
+    var users = await dbGetAllUsers();
+    for (var u of users) { await dbDeleteUser(u.id); }
+    showToast('All users cleared.');
+    await refreshAll();
+  } catch(e) { showToast('Error clearing users'); }
+}
+</script>
+
+// ── Notification helpers ────────────────────────────────────────────────────
+
+
+
+
+
+
+
+

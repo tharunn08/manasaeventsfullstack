@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard – MANASA</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+</head>
+<body>
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="organizer.html">Organizers</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost" onclick="signOut(event)">Sign Out</a>
+    </div>
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="organizer.html">Organizers</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<div class="user-dashboard">
+  <!-- Profile Header -->
+  <div class="user-profile-header" id="profileHeader">
+    <div class="user-avatar-lg" id="userAvatar">U</div>
+    <div>
+      <h2 id="userName">User</h2>
+      <p id="userEmail">Loading...</p>
+    </div>
+    <div style="margin-left:auto">
+      <button class="btn-sm" onclick="window.location.href='events.html'"><i class="fas fa-search"></i> Explore Events</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="user-tabs">
+    <button class="user-tab active" onclick="switchTab('bookings', this)"><i class="fas fa-ticket-alt"></i> My Bookings</button>
+    <button class="user-tab" onclick="switchTab('saved', this)"><i class="far fa-heart"></i> Saved Events</button>
+    <button class="user-tab" onclick="switchTab('preferences', this)"><i class="fas fa-sliders-h"></i> Preferences</button>
+  </div>
+
+  <!-- BOOKINGS TAB -->
+  <div id="bookingsTab">
+    <div id="bookingsList"></div>
+  </div>
+
+  <!-- SAVED TAB -->
+  <div id="savedTab" style="display:none">
+    <div class="events-grid" id="savedGrid"></div>
+  </div>
+
+  <!-- PREFERENCES TAB -->
+  <div id="preferencesTab" style="display:none">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;">
+      <h3 style="font-family:var(--font-display);font-size:20px;margin-bottom:24px;">Your Interests</h3>
+      <p style="color:var(--text-muted);margin-bottom:20px;">Select your interests and we'll show you personalized event recommendations.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px" id="interestTags"></div>
+      <div class="form-field">
+        <label style="font-size:13px;color:var(--text-muted);display:block;margin-bottom:8px;">Notification Preferences</label>
+        <div style="display:flex;flex-direction:column;gap:14px;" id="notifPrefs"></div>
+      </div>
+      <button class="btn-primary" style="margin-top:24px" onclick="savePreferences()">Save Preferences</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+      <p>Bengaluru's premier event discovery &amp; ticketing platform.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="events.html">Browse Events</a>
+      <a href="organizer.html">Organizers</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p><i class="fas fa-phone"></i> 7411038339</p>
+      <p><i class="fas fa-map-marker-alt"></i><a href="https://share.google/alKB1wMb4D0Hpw6tw" target="_blank"> View on Map</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom"><p>&copy; 2025 MANASA. All rights reserved.</p></div>
+</footer>
+
+<script src="app.js"></script>
+<script src="db.js"></script>
+<script>
+// ── Build Preferences UI ──────────────────────────────────────
+var INTERESTS = ['Music 🎵','Tech 💻','Food & Drink 🍜','Sports 🏃','Comedy 😂','Wellness 🧘','Art & Culture 🎨','Workshops 📝','Outdoor 🌿','Nightlife 🌙'];
+var NOTIF_OPTIONS = [
+  ['Email reminders for saved events', true],
+  ['New events matching your interests', true],
+  ['Trending events in your city', false],
+  ['Exclusive deals & early bird offers', true]
+];
+
+function buildPreferencesUI() {
+  var tagContainer = document.getElementById('interestTags');
+  tagContainer.innerHTML = INTERESTS.map(function(interest) {
+    return '<button class="tag pref-tag" onclick="this.classList.toggle(\'selected\');this.style.background=this.classList.contains(\'selected\')?\'rgba(255,92,53,0.15)\':\'\';this.style.borderColor=this.classList.contains(\'selected\')?\'var(--accent)\':\'\'">' + interest + '</button>';
+  }).join('');
+
+  var notifContainer = document.getElementById('notifPrefs');
+  notifContainer.innerHTML = NOTIF_OPTIONS.map(function(opt) {
+    return '<label style="display:flex;align-items:center;gap:12px;font-size:15px;cursor:pointer">'
+      + '<input type="checkbox" ' + (opt[1] ? 'checked' : '') + ' style="accent-color:var(--accent);width:18px;height:18px">'
+      + opt[0] + '</label>';
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+  var user = JSON.parse(localStorage.getItem('manasaUser') || 'null');
+  if (!user) { window.location.href = 'login.html'; return; }
+  document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+  document.getElementById('userName').textContent = user.name;
+  document.getElementById('userEmail').textContent = user.email + ' · Member since ' + new Date(user.joined).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+  buildPreferencesUI();
+  await initDB().catch(function(e){ console.error('DB init failed', e); });
+  await renderBookings();
+  renderSaved();
+});
+
+function switchTab(tab, btn) {
+  ['bookings','saved','preferences'].forEach(function(t) {
+    document.getElementById(t + 'Tab').style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.user-tab').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+async function renderBookings() {
+  var user = JSON.parse(localStorage.getItem('manasaUser') || 'null');
+  var container = document.getElementById('bookingsList');
+  var allBookings = [];
+  try { allBookings = await dbGetAllBookings(); } catch(e) {}
+
+  // Filter to this user's bookings by email
+  var bookings = user ? allBookings.filter(function(b) {
+    return b.user_email && b.user_email.toLowerCase() === (user.email || '').toLowerCase();
+  }) : [];
+
+  if (!bookings.length) {
+    container.innerHTML = '<div style="text-align:center;padding:60px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">'
+      + '<div style="font-size:48px;margin-bottom:16px">🎟️</div>'
+      + '<h3 style="font-family:var(--font-display);margin-bottom:8px">No bookings yet</h3>'
+      + '<p style="color:var(--text-muted);margin-bottom:20px">Explore events and book your first experience!</p>'
+      + '<a href="events.html" class="btn-primary">Browse Events</a></div>';
+    return;
+  }
+  container.innerHTML = bookings.map(function(b) {
+    var e = EVENTS.find(function(ev) { return ev.id === b.event_id; });
+    var emoji = e ? e.emoji : '🎫';
+    var gradient = e ? e.gradient : 'linear-gradient(135deg,#f97316,#ef4444)';
+    var total = parseFloat(b.total_price) || 0;
+    return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;display:flex;gap:20px;align-items:center;flex-wrap:wrap">'
+      + '<div style="width:64px;height:64px;border-radius:12px;background:' + gradient + ';display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">' + emoji + '</div>'
+      + '<div style="flex:1;min-width:0">'
+      + '<h4 style="font-family:var(--font-display);font-size:17px;margin-bottom:4px">' + (b.event_title||'') + '</h4>'
+      + '<p style="font-size:13px;color:var(--text-muted)"><i class="far fa-calendar" style="margin-right:4px"></i>' + (b.event_date||'') + ' &middot; ' + (b.event_time||'') + ' &middot; ' + (b.event_venue||'—') + '</p>'
+      + '<p style="font-size:13px;color:var(--text-muted);margin-top:4px">' + (b.tickets||1) + ' ticket' + ((b.tickets||1) > 1 ? 's' : '') + ' &middot; ' + (total === 0 ? 'Free' : '&#8377;' + total.toLocaleString('en-IN')) + '</p>'
+      + '<p style="font-size:11px;color:var(--text-dim);margin-top:4px">Order: ' + (b.order_id||'—') + '</p>'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:8px">'
+      + '<span class="status-badge status-upcoming">✓ Confirmed</span>'
+      + '<button class="btn-sm" onclick="showTicketFromDB(' + JSON.stringify(b).replace(/'/g,"\'") + ')"><i class="fas fa-qrcode"></i> View Ticket</button>'
+      + '</div></div>';
+  }).join('');
+}
+
+function showTicketFromDB(b) {
+  var e = EVENTS.find(function(ev) { return ev.id === b.event_id; });
+  var emoji = e ? e.emoji : '🎫';
+  var gradient = e ? e.gradient : 'linear-gradient(135deg,#f97316,#ef4444)';
+  var total = parseFloat(b.total_price) || 0;
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)';
+  modal.innerHTML = '<div style="max-width:400px;width:100%">'
+    + '<div class="ticket-card">'
+    + '<div class="ticket-top">'
+    + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">'
+    + '<div style="width:48px;height:48px;border-radius:10px;background:' + gradient + ';display:flex;align-items:center;justify-content:center;font-size:22px">' + emoji + '</div>'
+    + '<div><h3 style="font-family:var(--font-display);font-size:17px">' + (b.event_title||'Event') + '</h3><p style="font-size:12px;color:var(--text-muted)">' + (b.event_venue||'') + '</p></div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+    + '<div><span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:block">Date</span><strong>' + (b.event_date||'—') + '</strong></div>'
+    + '<div><span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:block">Time</span><strong>' + (b.event_time||'—') + '</strong></div>'
+    + '<div><span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:block">Tickets</span><strong>' + (b.tickets||1) + '</strong></div>'
+    + '<div><span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:block">Total</span><strong>' + (total===0?'FREE':'&#8377;'+total.toLocaleString('en-IN')) + '</strong></div>'
+    + '<div style="grid-column:1/-1"><span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:block">Order ID</span><strong>' + (b.order_id||'—') + '</strong></div>'
+    + '</div></div>'
+    + '<div class="ticket-divider" style="position:relative;border-top:2px dashed rgba(255,255,255,0.1);margin:0 20px">'
+    + '<div class="ticket-notch ticket-notch-left" style="background:var(--bg)"></div>'
+    + '<div class="ticket-notch ticket-notch-right" style="background:var(--bg)"></div>'
+    + '</div>'
+    + '<div class="ticket-bottom">'
+    + '<div style="width:140px;height:140px;background:#fff;border-radius:8px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center">'
+    + '<svg width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" fill="white"/><rect x="5" y="5" width="40" height="40" fill="black" rx="3"/><rect x="10" y="10" width="30" height="30" fill="white" rx="2"/><rect x="16" y="16" width="18" height="18" fill="black"/><rect x="75" y="5" width="40" height="40" fill="black" rx="3"/><rect x="80" y="10" width="30" height="30" fill="white" rx="2"/><rect x="86" y="16" width="18" height="18" fill="black"/><rect x="5" y="75" width="40" height="40" fill="black" rx="3"/><rect x="10" y="80" width="30" height="30" fill="white" rx="2"/><rect x="16" y="86" width="18" height="18" fill="black"/><rect x="50" y="5" width="5" height="5" fill="black"/><rect x="60" y="5" width="5" height="5" fill="black"/><rect x="50" y="15" width="5" height="5" fill="black"/><rect x="55" y="20" width="5" height="5" fill="black"/><rect x="65" y="15" width="5" height="5" fill="black"/><rect x="50" y="50" width="5" height="5" fill="black"/><rect x="60" y="55" width="5" height="5" fill="black"/><rect x="70" y="50" width="5" height="5" fill="black"/><rect x="55" y="60" width="5" height="5" fill="black"/><rect x="80" y="55" width="5" height="5" fill="black"/><rect x="50" y="75" width="5" height="5" fill="black"/><rect x="60" y="80" width="5" height="5" fill="black"/><rect x="55" y="90" width="5" height="5" fill="black"/><rect x="70" y="85" width="5" height="5" fill="black"/></svg>'
+    + '</div>'
+    + '<p style="font-size:13px;color:var(--text-muted);margin-bottom:4px">Scan at the entrance</p>'
+    + '<p style="font-size:11px;color:var(--text-dim)">MANASA Events · ' + (b.order_id||'') + '</p>'
+    + '</div></div>'
+    + '<button onclick="this.closest(\'div[style]\').remove()" style="width:100%;margin-top:16px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:10px;font-size:14px;cursor:pointer">Close</button>'
+    + '</div>';
+  document.body.appendChild(modal);
+}
+
+
+function renderSaved() {
+  var savedIds = JSON.parse(localStorage.getItem('savedEvents') || '[]');
+  var saved = EVENTS.filter(function(e) { return savedIds.includes(e.id); });
+  var grid = document.getElementById('savedGrid');
+  if (!saved.length) {
+    grid.innerHTML = '<div style="text-align:center;padding:60px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);grid-column:1/-1">'
+      + '<div style="font-size:48px;margin-bottom:16px">❤️</div>'
+      + '<h3 style="font-family:var(--font-display);margin-bottom:8px">No saved events</h3>'
+      + '<p style="color:var(--text-muted);margin-bottom:20px">Tap the heart icon on any event to save it here.</p>'
+      + '<a href="events.html" class="btn-primary">Explore Events</a></div>';
+    return;
+  }
+  grid.innerHTML = saved.map(function(e) { return createEventCard(e); }).join('');
+}
+
+function showTicket(eventId) {
+  var e = EVENTS.find(function(ev) { return ev.id === eventId; });
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)';
+  modal.innerHTML = '<div style="max-width:400px;width:100%">'
+    + '<div class="ticket-card">'
+    + '<div class="ticket-top">'
+    + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">'
+    + '<div style="width:48px;height:48px;border-radius:10px;background:' + e.gradient + ';display:flex;align-items:center;justify-content:center;font-size:22px">' + e.emoji + '</div>'
+    + '<div><h3 style="font-family:var(--font-display);font-size:18px">' + e.title + '</h3><p style="font-size:13px;color:var(--text-muted)">' + e.venue + '</p></div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+    + '<div><span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:block">Date</span><strong>' + formatDate(e.date) + '</strong></div>'
+    + '<div><span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:block">Time</span><strong>' + e.time + '</strong></div>'
+    + '<div><span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:block">Price</span><strong>' + (e.price === 0 ? 'FREE' : '&#8377;' + e.price) + '</strong></div>'
+    + '<div><span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:block">Booking ID</span><strong>#MNS' + String(eventId).padStart(4,'0') + '</strong></div>'
+    + '</div></div>'
+    + '<div class="ticket-divider" style="position:relative;border-top:2px dashed rgba(255,255,255,0.1);margin:0 20px">'
+    + '<div class="ticket-notch ticket-notch-left" style="background:var(--bg)"></div>'
+    + '<div class="ticket-notch ticket-notch-right" style="background:var(--bg)"></div>'
+    + '</div>'
+    + '<div class="ticket-bottom">'
+    + '<div style="width:140px;height:140px;background:#fff;border-radius:8px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center">'
+    + '<svg width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" fill="white"/><rect x="5" y="5" width="40" height="40" fill="black" rx="3"/><rect x="10" y="10" width="30" height="30" fill="white" rx="2"/><rect x="16" y="16" width="18" height="18" fill="black"/><rect x="75" y="5" width="40" height="40" fill="black" rx="3"/><rect x="80" y="10" width="30" height="30" fill="white" rx="2"/><rect x="86" y="16" width="18" height="18" fill="black"/><rect x="5" y="75" width="40" height="40" fill="black" rx="3"/><rect x="10" y="80" width="30" height="30" fill="white" rx="2"/><rect x="16" y="86" width="18" height="18" fill="black"/><rect x="50" y="5" width="5" height="5" fill="black"/><rect x="60" y="5" width="5" height="5" fill="black"/><rect x="50" y="15" width="5" height="5" fill="black"/><rect x="55" y="20" width="5" height="5" fill="black"/><rect x="65" y="15" width="5" height="5" fill="black"/><rect x="50" y="55" width="5" height="5" fill="black"/><rect x="60" y="50" width="5" height="5" fill="black"/><rect x="70" y="55" width="5" height="5" fill="black"/><rect x="55" y="60" width="5" height="5" fill="black"/><rect x="65" y="65" width="5" height="5" fill="black"/><rect x="75" y="50" width="5" height="5" fill="black"/><rect x="80" y="55" width="5" height="5" fill="black"/><rect x="90" y="60" width="5" height="5" fill="black"/><rect x="95" y="55" width="5" height="5" fill="black"/><rect x="50" y="75" width="5" height="5" fill="black"/><rect x="60" y="80" width="5" height="5" fill="black"/><rect x="55" y="90" width="5" height="5" fill="black"/><rect x="70" y="85" width="5" height="5" fill="black"/><rect x="80" y="75" width="5" height="5" fill="black"/><rect x="85" y="80" width="5" height="5" fill="black"/><rect x="95" y="75" width="5" height="5" fill="black"/><rect x="100" y="85" width="5" height="5" fill="black"/><rect x="108" y="75" width="7" height="7" fill="black"/></svg>'
+    + '</div>'
+    + '<p style="font-size:13px;color:var(--text-muted);margin-bottom:6px">Scan at the entrance</p>'
+    + '<p style="font-size:11px;color:var(--text-dim)">MANASA Events &middot; #MNS' + String(eventId).padStart(4,'0') + '</p>'
+    + '</div></div>'
+    + '<button onclick="this.closest(\'div[style]\').remove()" style="width:100%;margin-top:16px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px;border-radius:10px;font-size:14px;cursor:pointer">Close</button>'
+    + '</div>';
+  document.body.appendChild(modal);
+}
+
+function savePreferences() {
+  showToast('Preferences saved! We\'ll personalize your feed 🎯');
+}
+
+function signOut(e) {
+  e.preventDefault();
+  localStorage.removeItem('manasaUser');
+  showToast('Signed out successfully');
+  setTimeout(function() { window.location.href = 'index.html'; }, 800);
+}
+</script>
+</body>
+</html>

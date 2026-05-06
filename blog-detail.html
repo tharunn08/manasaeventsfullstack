@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Post – MANASA Events</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+.article-layout{max-width:1100px;margin:0 auto;padding:48px 24px;display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:start}
+.article-hero{height:340px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:100px;margin-bottom:32px;position:relative;overflow:hidden}
+.article-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.4) 0%,transparent 60%)}
+.article-breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);margin-bottom:20px;flex-wrap:wrap}
+.article-breadcrumb a{color:var(--text-dim);text-decoration:none;transition:color .15s}
+.article-breadcrumb a:hover{color:var(--accent)}
+.article-cat-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,92,53,.12);color:var(--accent);border-radius:50px;padding:5px 14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
+.article-title{font-family:var(--font-display);font-size:clamp(24px,4vw,40px);font-weight:800;line-height:1.2;margin-bottom:20px}
+.article-meta-row{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:20px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:32px}
+.article-author{display:flex;align-items:center;gap:10px}
+.author-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.author-info .name{font-size:14px;font-weight:700}
+.author-info .role{font-size:12px;color:var(--text-dim)}
+.article-stats{display:flex;gap:16px;flex-wrap:wrap;margin-left:auto}
+.article-stat{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted)}
+.article-body{font-size:16px;line-height:1.85;color:var(--text-muted)}
+.article-body h2{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);margin:40px 0 16px}
+.article-body h3{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text);margin:28px 0 12px}
+.article-body p{margin-bottom:20px}
+.article-body ul,.article-body ol{padding-left:24px;margin-bottom:20px}
+.article-body li{margin-bottom:8px}
+.article-body blockquote{border-left:4px solid var(--accent);padding:16px 20px;background:var(--surface2);border-radius:0 8px 8px 0;margin:24px 0;font-style:italic;color:var(--text)}
+.article-body .tip-box{background:rgba(255,92,53,.08);border:1px solid rgba(255,92,53,.2);border-radius:12px;padding:20px;margin:24px 0}
+.article-body .tip-box strong{color:var(--accent);display:block;margin-bottom:8px}
+.article-tags-row{display:flex;flex-wrap:wrap;gap:8px;margin:32px 0;padding-top:24px;border-top:1px solid var(--border)}
+.article-share{display:flex;gap:10px;align-items:center;margin-bottom:40px;flex-wrap:wrap}
+.share-btn{display:flex;align-items:center;gap:8px;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font-body);transition:opacity .2s}
+.share-btn:hover{opacity:.85}
+.related-section{margin-top:48px;padding-top:32px;border-top:1px solid var(--border)}
+.related-section h3{font-family:var(--font-display);font-size:20px;font-weight:800;margin-bottom:20px}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.related-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;text-decoration:none;color:inherit;transition:transform .22s,box-shadow .22s;display:block}
+.related-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.2)}
+.related-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:36px}
+.related-body{padding:16px}
+.related-body .cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:6px}
+.related-body h4{font-family:var(--font-display);font-size:14px;font-weight:700;line-height:1.3;margin-bottom:6px}
+.related-body .meta{font-size:11px;color:var(--text-dim)}
+/* Sidebar */
+.article-sidebar{position:sticky;top:90px;display:flex;flex-direction:column;gap:20px}
+.sidebar-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.sidebar-panel h4{font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.toc-item{display:block;padding:7px 0;font-size:13px;color:var(--text-muted);text-decoration:none;border-bottom:1px solid var(--border);transition:color .15s}
+.toc-item:last-child{border-bottom:none}
+.toc-item:hover{color:var(--accent)}
+.progress-bar-wrap{height:4px;background:var(--surface2);border-radius:2px;margin-bottom:8px;overflow:hidden}
+.progress-bar{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .1s linear}
+.tag{padding:5px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:50px;font-size:12px;font-weight:500;cursor:pointer;transition:all .18s;color:var(--text-muted);text-decoration:none;display:inline-block}
+.tag:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+@media(max-width:900px){.article-layout{grid-template-columns:1fr}.article-sidebar{position:static}}
+</style>
+</head>
+<body>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="organizer.html">Organizers</a></li>
+      <li><a href="blog.html" class="active">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="login.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="organizer.html">Organizers</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<!-- Reading progress bar -->
+<div class="progress-bar-wrap" style="position:fixed;top:0;left:0;right:0;z-index:1000;height:3px;border-radius:0;margin:0;background:transparent">
+  <div class="progress-bar" id="readProgress"></div>
+</div>
+
+<div class="article-layout" id="articleLayout">
+  <!-- MAIN ARTICLE -->
+  <article id="articleMain">
+    <div class="article-breadcrumb">
+      <a href="index.html">Home</a>
+      <i class="fas fa-chevron-right" style="font-size:10px"></i>
+      <a href="blog.html">Blog</a>
+      <i class="fas fa-chevron-right" style="font-size:10px"></i>
+      <span id="breadcrumbCat">Article</span>
+    </div>
+
+    <div id="articleCatBadge"></div>
+    <h1 class="article-title" id="articleTitle">Loading&hellip;</h1>
+
+    <div class="article-meta-row">
+      <div class="article-author">
+        <div class="author-avatar" id="authorAvatar">?</div>
+        <div class="author-info">
+          <div class="name" id="authorName">Author</div>
+          <div class="role">MANASA Staff Writer</div>
+        </div>
+      </div>
+      <div class="article-stats">
+        <span class="article-stat"><i class="far fa-calendar"></i> <span id="articleDate">–</span></span>
+        <span class="article-stat"><i class="far fa-clock"></i> <span id="articleRead">–</span></span>
+        <span class="article-stat"><i class="far fa-eye"></i> <span id="articleViews">–</span></span>
+      </div>
+    </div>
+
+    <div class="article-hero" id="articleHero">
+      <div class="article-hero-overlay"></div>
+      <span id="articleEmoji" style="position:relative;z-index:1"></span>
+    </div>
+
+    <div class="article-body" id="articleBody"></div>
+
+    <div class="article-tags-row" id="articleTags"></div>
+
+    <div style="margin-bottom:16px;font-size:14px;font-weight:600;color:var(--text-muted)">Share this article:</div>
+    <div class="article-share">
+      <button class="share-btn" style="background:rgba(37,211,102,.15);color:#25d366" onclick="sharePost('whatsapp')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+      <button class="share-btn" style="background:rgba(29,161,242,.15);color:#1da1f2" onclick="sharePost('twitter')"><i class="fab fa-twitter"></i> Twitter</button>
+      <button class="share-btn" style="background:rgba(24,119,242,.15);color:#1877f2" onclick="sharePost('facebook')"><i class="fab fa-facebook"></i> Facebook</button>
+      <button class="share-btn" style="background:var(--surface2);color:var(--text-muted)" onclick="sharePost('copy')"><i class="fas fa-link"></i> Copy Link</button>
+    </div>
+
+    <div class="related-section">
+      <h3>More Articles You'll Love</h3>
+      <div class="related-grid" id="relatedPosts"></div>
+    </div>
+  </article>
+
+  <!-- SIDEBAR -->
+  <aside class="article-sidebar">
+    <div class="sidebar-panel">
+      <h4><i class="fas fa-list" style="color:var(--accent);margin-right:8px"></i>Table of Contents</h4>
+      <div id="tocList"></div>
+    </div>
+
+    <div class="sidebar-panel">
+      <h4><i class="fas fa-fire" style="color:var(--accent);margin-right:8px"></i>Popular Posts</h4>
+      <div id="sidebarPopular"></div>
+    </div>
+
+    <div class="sidebar-panel" style="background:linear-gradient(135deg,rgba(255,92,53,.1),rgba(168,85,247,.1));border-color:rgba(255,92,53,.25)">
+      <h4>&#128236; Newsletter</h4>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;line-height:1.6">Get Bengaluru's best stories every Friday.</p>
+      <input type="email" class="form-input" placeholder="your@email.com" id="newsletterEmail2" style="margin-bottom:10px;width:100%;box-sizing:border-box">
+      <button class="btn-primary" style="width:100%;justify-content:center" onclick="subscribeNewsletter2()">Subscribe Free</button>
+    </div>
+  </aside>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+      <p>Bengaluru's premier event discovery &amp; ticketing platform.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="events.html">Browse Events</a>
+      <a href="organizer.html">Organizers</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p><i class="fas fa-phone"></i> 7411038339</p>
+    </div>
+  </div>
+  <div class="footer-bottom"><p>&copy; 2025 MANASA. All rights reserved.</p></div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+var BLOG_POSTS=[
+  {id:1,featured:true,cat:"City Guide",title:"Top 10 Things to Do in Bengaluru This Weekend",excerpt:"From sunrise treks at Nandi Hills to underground jazz bars in Indiranagar — your ultimate weekend planner for Bengaluru's most exciting experiences.",date:"2025-03-22",read:5,views:8420,emoji:"🏙️",gradient:"linear-gradient(135deg,#f97316,#ef4444)",author:"Kavya Sharma",authorBg:"#f97316",tags:["Weekend","Bengaluru","Guide"],
+    sections:[
+      {h:"Start Your Morning Right: Nandi Hills",body:"Bengaluru's most beloved escape begins before sunrise. The 60-km drive from the city centre takes you to the highest point in the Chikkaballapur district, where the clouds literally roll beneath your feet at dawn. Arrive by 5:30 AM to catch the golden hour mist. Entry is just ₹5 per person."},
+      {h:"Explore Cubbon Park on Two Wheels",body:"Rent a cycle from the Kasturba Road entrance and spend an hour riding through 300 acres of lush greenery. The park is car-free on Sunday mornings until 10 AM, making it the best time for a relaxed ride. Stop at the State Library, which has one of the most beautiful colonial facades in the city."},
+      {h:"Brunch at a Koramangala Cafe",body:"Bengaluru's brunch culture is world-class. Koramangala's 5th and 6th Blocks are packed with cafes serving everything from filter coffee with benne dosa to avocado toast and cold brew. Hole in the Wall Cafe, Magnolia Bakery, and Third Wave Coffee are weekend staples."},
+      {h:"Afternoon: Lal Bagh Botanical Garden",body:"Established in 1760, Lal Bagh is one of India's finest botanical gardens. The Glass House hosts seasonal flower shows — check the schedule before you go. The ancient rock formations in the centre of the park are over 3,000 million years old."},
+      {h:"Evening: Indiranagar Jazz Scene",body:"Bengaluru's jazz scene is concentrated in and around 100 Feet Road, Indiranagar. Toit Brewpub, The Humming Tree, and Fenny's Lounge regularly host live jazz and acoustic sessions on weekends. Arrive early to get a table — these places fill up fast."},
+    ]
+  },
+  {id:2,cat:"Tech",title:"Bengaluru's Biggest Hackathon Season is Here — What You Need to Know",excerpt:"April through June is hackathon season in Bengaluru.",date:"2025-03-18",read:4,views:5103,emoji:"💻",gradient:"linear-gradient(135deg,#8b5cf6,#3b82f6)",author:"Rahul Verma",authorBg:"#8b5cf6",tags:["Tech","Hackathon","Startups"],
+    sections:[
+      {h:"Why Bengaluru Leads India's Hackathon Scene",body:"Bengaluru hosts more hackathons per year than any other Indian city — and for good reason. With the highest density of engineers, product designers, and startup founders, the city has the raw talent to make 48-hour innovation sprints genuinely competitive."},
+      {h:"Top 5 Hackathons to Watch This Season",body:"HackBLR by Nasscom runs for three days and focuses on enterprise AI solutions. GoogleDevFest Hack is the signature event for Flutter and Firebase developers. Bengaluru Startup Weekend is a 54-hour sprint for aspiring founders. AngelHack and ETHIndia round out a strong calendar for blockchain and Web3 builders."},
+      {h:"How to Prepare and Win",body:"The teams that win hackathons don't just code well — they pitch well. Practice your two-minute demo relentlessly. Judges at most Bengaluru hackathons weight the live demo (40%), problem-market fit (30%), and technical execution (30%). Find a team with complementary skills at least two weeks before the event."},
+    ]
+  },
+  {id:3,cat:"Food & Drink",title:"Street Food Festivals You Absolutely Cannot Miss in April",excerpt:"Bengaluru's street food scene is exploding.",date:"2025-03-15",read:3,views:7215,emoji:"🍜",gradient:"linear-gradient(135deg,#10b981,#06b6d4)",author:"Deepa Nair",authorBg:"#10b981",tags:["Food","Festivals","Bengaluru"],
+    sections:[
+      {h:"The Bengaluru Food Festival at Cubbon Park",body:"Running across two weekends in April, this is the city's flagship food event. Over 200 stalls from every Indian state set up shop around Cubbon Park's central lawn. Expect a queue for the Chettinad fish curry stall — but it's worth every minute."},
+      {h:"Street Eats at UB City Courtyard",body:"UB City's monthly food pop-up takes a more curated approach. Around 40 vendors, each vetted for quality, serve dishes that range from traditional Karnataka cuisine to experimental fusion. The outdoor seating, live acoustic music, and string lights make it a delightful evening experience."},
+      {h:"Tips for Navigating Food Festivals",body:"Go hungry but not starving — you'll want to try small portions across many stalls. Bring cash; many vendors don't accept UPI. Arrive at opening time (usually 11 AM) to avoid the weekend lunch rush. The best stalls often sell out by 2 PM."},
+    ]
+  },
+  {id:4,cat:"Music",title:"Inside the Thriving Indie Music Scene of South Bengaluru",excerpt:"South Bengaluru has quietly become the city's indie music heartbeat.",date:"2025-03-10",read:6,views:4380,emoji:"🎵",gradient:"linear-gradient(135deg,#ec4899,#a855f7)",author:"Arjun Menon",authorBg:"#ec4899",tags:["Music","Indie","Nightlife"],
+    sections:[
+      {h:"The Venues Defining the Sound",body:"The Humming Tree in Indiranagar remains Bengaluru's indie flagship — a 300-capacity venue that has hosted everyone from Peter Cat Recording Co. to bedroom pop acts from Hyderabad and Mumbai. Windmills Craftworks in JP Nagar is the go-to for longer, more experimental sets."},
+      {h:"The Artists to Watch",body:"Bengaluru's indie scene has never been more fertile. Chennai-based ASWEKEEPSEARCHING regularly plays the city. Local acts like Lagori and Bloodywood have broken through to national audiences. The acoustic scene — Prateek Kuhad territory — is having a moment at smaller venues like Fenny's and Toit."},
+      {h:"How to Find Shows Before They Sell Out",body:"Follow BookMyShow, Insider.in, and the venues' own Instagram pages. Most indie shows in Bengaluru announce tickets 2–3 weeks in advance. Presale is usually 20–30% cheaper and these events regularly sell out."},
+    ]
+  },
+  {id:5,cat:"Wellness",title:"5 Sunrise Yoga Spots in Bengaluru",excerpt:"Bengaluru's parks offer stunning backdrops for morning routines.",date:"2025-03-05",read:4,views:3190,emoji:"🧘",gradient:"linear-gradient(135deg,#06d6a0,#10b981)",author:"Sneha Reddy",authorBg:"#06d6a0",tags:["Wellness","Yoga","Morning"],
+    sections:[
+      {h:"Lal Bagh Botanical Garden",body:"The sprawling gardens open at 6 AM and the early morning light filtering through the trees is genuinely magical. Several community yoga groups meet near the Glass House entrance on weekday mornings. Join them or find your own quiet corner."},
+      {h:"Cubbon Park's Open Lawns",body:"The central lawn facing the State Library is the most popular yoga spot in the city. It's peaceful before 8 AM. Several certified instructors hold paid sunrise sessions here on Sundays — registration through their Instagram pages."},
+      {h:"Nandi Hills at Dawn",body:"If you're willing to make the drive, Nandi Hills offers an unmatched backdrop for sunrise meditation. The air is cool, the views extend for miles, and the silence is profound. Pack a mat and arrive before the tourist buses."},
+    ]
+  },
+  {id:6,cat:"Comedy",title:"The Best Stand-Up Comedy Nights in Bengaluru Right Now",excerpt:"Bengaluru has one of India's most vibrant comedy circuits.",date:"2025-02-28",read:3,views:6024,emoji:"😂",gradient:"linear-gradient(135deg,#fbbf24,#f97316)",author:"Karan Johari",authorBg:"#fbbf24",tags:["Comedy","Nightlife","Entertainment"],
+    sections:[
+      {h:"The Big Venues for Headline Acts",body:"Chowdiah Memorial Hall hosts large-format comedy shows featuring national and international names. Kingdom of Comedy at Orion Mall runs a monthly headline show with rotating headliners. These shows typically run ₹499–₹1499 and book out 2–3 weeks in advance."},
+      {h:"Open Mic Nights: Free and Fantastic",body:"Almost every Bengaluru comedy bar runs a weekly open mic. Pint Room, The Comedy Factory, and Farzi Café's Indiranagar location all have regular Wednesday or Thursday open mics that are free entry with a drink minimum. Expect 10–15 comedians doing 5-minute sets — quality varies wildly, which is part of the fun."},
+    ]
+  }
+];
+
+// Extend with minimal content for remaining posts
+for(var i=6;i<18;i++){
+  if(!BLOG_POSTS[i]){
+    var templates=[
+      {id:7,cat:"Sports",title:"The Complete Guide to Running Events in Bengaluru 2025",date:"2025-02-22",read:7,views:5801,emoji:"🏃",gradient:"linear-gradient(135deg,#ef4444,#f97316)",author:"Vikram Das",authorBg:"#ef4444",tags:["Sports","Running","Fitness"],sections:[{h:"The Running Calendar",body:"Bengaluru's 2025 running calendar is the most packed in the city's history. Starting with the Bengaluru Half Marathon in April and ending with the Midnight Marathon in December, there are opportunities for runners of every level — from 5K beginners to ultra-marathon veterans. Registration is typically open 8 weeks before each race."},{h:"Training Resources",body:"Several running clubs offer free group training runs. The Bengaluru Runners Club meets at Cubbon Park every Saturday at 6 AM. The Koramangala Pacers group meets near Forum Mall on Sunday mornings. Both groups are beginner-friendly and have Strava clubs you can join for virtual support."}]},
+      {id:8,cat:"Art & Culture",title:"Bengaluru's Hidden Art Galleries Worth Your Weekend",date:"2025-02-18",read:5,views:2870,emoji:"🎨",gradient:"linear-gradient(135deg,#a855f7,#6366f1)",author:"Ananya Krishnan",authorBg:"#a855f7",tags:["Art","Culture","Gallery"],sections:[{h:"Gallery Sumukha",body:"Tucked behind a quiet lane in JP Nagar, Sumukha is one of Bengaluru's most respected private galleries. They show primarily South Asian contemporary art with a particular strength in sculpture and installation. Admission is always free and the crowd is wonderfully mixed."},{h:"1 Shanthiroad Studio and Gallery",body:"This artist residency and gallery in Seshadripuram is the beating heart of Bengaluru's experimental art scene. Their shows are unpredictable in the best possible way — you might encounter performance art, video installations, or traditional oil paintings in the same evening."}]},
+      {id:9,cat:"Tech",title:"AI & ML Meetups in Bengaluru: Where to Network in 2025",date:"2025-02-14",read:5,views:4950,emoji:"🤖",gradient:"linear-gradient(135deg,#6366f1,#8b5cf6)",author:"Rahul Verma",authorBg:"#6366f1",tags:["AI","Tech","Networking"],sections:[{h:"Bengaluru AI Community",body:"The BAI Community is the largest AI meetup in the city with over 8,000 members on Meetup.com. They host monthly sessions at rotating tech company offices — recent venues include Amazon, Flipkart, and Microsoft. Sessions cover everything from computer vision to responsible AI policy."},{h:"Deep Learning Study Group",body:"A more intimate group of 50–100 ML practitioners who meet monthly to work through research papers together. If you're a practitioner looking for depth over breadth, this is the group for you. Meetings are held at the IISC campus and are open to the public."}]},
+      {id:10,cat:"Food & Drink",title:"Craft Beer Revolution: The Best Taprooms in Bengaluru",date:"2025-02-10",read:4,views:8930,emoji:"🍺",gradient:"linear-gradient(135deg,#f59e0b,#ef4444)",author:"Siddharth Kumar",authorBg:"#f59e0b",tags:["Food","Beer","Nightlife"],sections:[{h:"Toit: The Trailblazer",body:"Toit Brewpub on 100 Feet Road, Indiranagar, practically invented Bengaluru's craft beer culture. Their Witbier and Stout are benchmarks for the category. The rooftop is one of the best evening spots in the city — arrive before 7 PM on weekends to get a table without a wait."},{h:"The Hidden Gems",body:"Biergarten in Indiranagar is a more casual, garden-style bar with a rotating tap list of 12 Indian craft beers. Arbor Brewing Company in Domlur is the go-to for American-style IPAs and the food menu is legitimately good. Windmills Craftworks in JP Nagar doubles as a concert venue with great beer on tap."}]},
+      {id:11,cat:"City Guide",title:"The Perfect Day Trip from Bengaluru: 8 Destinations Within 3 Hours",date:"2025-02-05",read:6,views:11240,emoji:"🗺️",gradient:"linear-gradient(135deg,#0ea5e9,#3b82f6)",author:"Kavya Sharma",authorBg:"#0ea5e9",tags:["Travel","Day Trip","Bengaluru"],sections:[{h:"Nandi Hills (60 km)",body:"The most popular day trip from Bengaluru for good reason. The drive up the ghats is beautiful and the summit offers panoramic views. Best visited in winter (October–February) when the weather is cool and mist-free. The ancient Bhoga Nandeeshwara Temple at the base is a 1,000-year-old gem."},{h:"Shivanasamudra Falls (130 km)",body:"India's second largest island waterfall is at its most spectacular during and just after monsoon (July–October). The drive through Mandya district takes you through sugarcane fields and small towns. Pack a picnic and spend the afternoon at the viewpoints."}]},
+      {id:12,cat:"Wellness",title:"Mental Wellness Events and Communities Growing in Bengaluru",date:"2025-01-28",read:5,views:3410,emoji:"💚",gradient:"linear-gradient(135deg,#10b981,#6366f1)",author:"Meena Pillai",authorBg:"#10b981",tags:["Wellness","Mental Health","Community"],sections:[{h:"The Mental Health Cafes",body:"A new format is emerging in Bengaluru — informal cafe meetups focused on mental wellness conversations. These are peer-led, not therapy, but offer a safe space to discuss anxiety, burnout, and relationships without judgment. The Nirvana Wellness Cafe in Jayanagar hosts one every second Sunday."},{h:"Workshops Worth Attending",body:"The Bengaluru Mindfulness Centre offers weekend workshops on meditation, breathwork, and cognitive behavioral techniques. Sessions are typically ₹500–₹1500 and group sizes are kept small (8–12 participants) to encourage openness. The facilitators are trained therapists."}]},
+      {id:13,cat:"Music",title:"Carnatic to EDM: How Bengaluru Bridges Classical and Contemporary",date:"2025-01-20",read:8,views:2950,emoji:"🎶",gradient:"linear-gradient(135deg,#dc2626,#f59e0b)",author:"Arjun Menon",authorBg:"#dc2626",tags:["Music","Carnatic","Culture"],sections:[{h:"A City Built on Classical Foundations",body:"Bengaluru has deep Carnatic roots. Chowdiah Memorial Hall, built by the legendary violinist T. Chowdaiah, remains the city's cultural anchor. The sabha season (December–January) brings hundreds of classical musicians to the city for the Bengaluru Gayana Samaja's annual festival."},{h:"The Electronic Underground",body:"Running parallel to this classical tradition is one of India's most exciting electronic music scenes. Clubs like The Humming Tree, b:om, and ALTO, and events like Magnetic Fields (which started in Rajasthan but has Bengaluru roots) have put the city on the global techno and house map."}]},
+      {id:14,cat:"Comedy",title:"Open Mic Night Guide: How to Find (and Crush) Your First Set",date:"2025-01-15",read:4,views:4210,emoji:"🎤",gradient:"linear-gradient(135deg,#fbbf24,#ec4899)",author:"Karan Johari",authorBg:"#ec4899",tags:["Comedy","Open Mic","Beginner"],sections:[{h:"Finding Your First Open Mic",body:"Bengaluru has 20+ regular open mics across the city. The most beginner-friendly are at Pint Room (HSR Layout), The Comedy Factory (Koramangala), and Moonshine Meadery (Whitefield). Sign-up sheets typically open 30 minutes before the show. Slots are 5 minutes."},{h:"Your First Five Minutes",body:"Write 3 jokes, not 1 extended bit. Open strong — your best joke goes first. Don't apologize if a joke doesn't land. End on a high. Bring 5 friends — a friendly crowd makes all the difference. Most importantly, perform even when you're terrified. The first set is just about surviving."}]},
+      {id:15,cat:"Art & Culture",title:"Bengaluru Theatre Revival: Shows You Must Watch This Quarter",date:"2025-01-08",read:5,views:1980,emoji:"🎭",gradient:"linear-gradient(135deg,#8b5cf6,#ec4899)",author:"Ananya Krishnan",authorBg:"#8b5cf6",tags:["Theatre","Art","Culture"],sections:[{h:"The Ranga Shankara Difference",body:"Ranga Shankara in JP Nagar is Bengaluru's most beloved theatre. It seats just 330 people and hosts over 400 shows per year across Kannada, Hindi, English, and regional languages. Ticket prices are intentionally kept low (₹100–₹300) to keep theatre accessible."},{h:"Experimental Theatre Worth Watching",body:"Jagriti Theatre in Whitefield has become the venue of choice for experimental and English-language productions. They regularly host productions from Mumbai's Prithvi Theatre as well as original Bengaluru productions. The cafe attached to the venue is a lovely spot for pre-show dinner."}]},
+      {id:16,cat:"Sports",title:"Bengaluru FC Season Review & What's Next",date:"2024-12-30",read:7,views:6750,emoji:"⚽",gradient:"linear-gradient(135deg,#3b82f6,#0ea5e9)",author:"Vikram Das",authorBg:"#3b82f6",tags:["Sports","Football","Bengaluru FC"],sections:[{h:"The Season in Numbers",body:"Bengaluru FC's ISL season was one of the most competitive in recent memory. 14 wins from 22 games, a goals-for tally of 38, and a defensive record that was the envy of every other club in the league. The playoffs exit was painful, but the foundation for next season looks solid."},{h:"Youth Academy Graduates to Watch",body:"The club's investment in its youth academy is paying dividends. Three academy graduates made their senior debuts this season and all three showed significant promise. Watch out for midfielder Roshan Kumar and left-back Deepak Tangri in the coming campaign."}]},
+      {id:17,cat:"City Guide",title:"The Ultimate Koramangala Neighbourhood Guide for 2025",date:"2024-12-22",read:6,views:9400,emoji:"🌆",gradient:"linear-gradient(135deg,#f97316,#a855f7)",author:"Kavya Sharma",authorBg:"#a855f7",tags:["City Guide","Koramangala","Bengaluru"],sections:[{h:"The Startup Capital Within the City",body:"Koramangala's 5th and 7th Blocks are home to more funded startups per square kilometre than almost anywhere else in Asia. The neighbourhood's density of co-working spaces (WeWork, 91springboard, IndiQube) and incubators has made it the city's startup nerve centre."},{h:"Eating, Drinking, and Living Well",body:"Koramangala's food scene is extraordinary in range and quality. For breakfast: Eat Raja on 80 Feet Road. For South Indian lunch: Vidyarthi Bhavan (technically Basavanagudi, but close enough). For dinner: The Thai Pavilion at the Vivanta or Chianti for Italian. For craft beer: Toit."}]},
+      {id:18,cat:"Tech",title:"From Startup to Unicorn: Bengaluru's Founder Stories of 2024",date:"2024-12-15",read:9,views:7200,emoji:"🚀",gradient:"linear-gradient(135deg,#6366f1,#10b981)",author:"Rahul Verma",authorBg:"#6366f1",tags:["Tech","Startups","Founders"],sections:[{h:"The Year of the Comeback",body:"If 2022 was the year of peak funding and 2023 was the reckoning, 2024 was the year of the comeback. Bengaluru saw more profitable startup exits and IPOs than any year in the previous decade. The mood on Lavelle Road and in the Koramangala coffee shops shifted measurably — cautious optimism replacing the fear of 2023."},{h:"Five Founders Who Defined the Year",body:"Zepto's founders Aadit Palicha and Kaivalya Vohra (IIT graduates who launched a 10-minute grocery delivery service from a Bengaluru dark store) raised $1.4 billion. Meesho's Vidit Aatrey built a social commerce platform that now serves 140 million active users. These stories show what's possible when ambition meets execution in the right city."}]}
+    ];
+    BLOG_POSTS=BLOG_POSTS.concat(templates);
+    break;
+  }
+}
+// Ensure all 18 posts exist
+if(BLOG_POSTS.length<18){
+  var extra=[
+    {id:7,cat:"Sports",title:"The Complete Guide to Running Events in Bengaluru 2025",date:"2025-02-22",read:7,views:5801,emoji:"🏃",gradient:"linear-gradient(135deg,#ef4444,#f97316)",author:"Vikram Das",authorBg:"#ef4444",tags:["Sports","Running","Fitness"],sections:[{h:"Race Calendar 2025",body:"Bengaluru's running year is packed. The city calendar features the Bengaluru Half Marathon (April), Nandi Hills Summit Run (June), Women's Run (August), and the flagship Bengaluru 10K (October). Whether you're running 5K or 42K, there's a race on the calendar for you."},{h:"Community Running Groups",body:"The Bengaluru Runners Club meets at Cubbon Park every Saturday at 6 AM — beginners always welcome. The Koramangala Pacers group meets at Forum Mall on Sundays. Both groups use Strava for virtual support and accountability throughout the week."}]},
+    {id:8,cat:"Art & Culture",title:"Bengaluru's Hidden Art Galleries Worth Your Weekend",date:"2025-02-18",read:5,views:2870,emoji:"🎨",gradient:"linear-gradient(135deg,#a855f7,#6366f1)",author:"Ananya Krishnan",authorBg:"#a855f7",tags:["Art","Culture","Gallery"],sections:[{h:"Gallery Sumukha",body:"Gallery Sumukha in JP Nagar is one of Bengaluru's most respected private galleries. They show South Asian contemporary art — sculpture, installation, and painting. Admission is always free."},{h:"1 Shanthiroad Studio",body:"This artist residency in Seshadripuram is the beating heart of Bengaluru's experimental art scene. Their shows are unpredictable in the best possible way — video installations, performance art, and traditional painting in the same space."}]},
+    {id:9,cat:"Tech",title:"AI & ML Meetups in Bengaluru: Where to Network in 2025",date:"2025-02-14",read:5,views:4950,emoji:"🤖",gradient:"linear-gradient(135deg,#6366f1,#8b5cf6)",author:"Rahul Verma",authorBg:"#6366f1",tags:["AI","Tech","Networking"],sections:[{h:"Bengaluru AI Community",body:"The BAI Community is the largest AI meetup in the city with over 8,000 members. They host monthly sessions at Amazon, Flipkart, Microsoft, and other tech company offices."},{h:"Deep Learning Study Group",body:"A more intimate group working through ML research papers together. Meetings are held at the IISC campus and are open to the public. This is the group for practitioners who want depth over breadth."}]},
+    {id:10,cat:"Food & Drink",title:"Craft Beer Revolution: The Best Taprooms in Bengaluru",date:"2025-02-10",read:4,views:8930,emoji:"🍺",gradient:"linear-gradient(135deg,#f59e0b,#ef4444)",author:"Siddharth Kumar",authorBg:"#f59e0b",tags:["Food","Beer","Nightlife"],sections:[{h:"Toit: The Pioneer",body:"Toit Brewpub on 100 Feet Road practically invented Bengaluru's craft beer culture. Their Witbier and Stout are benchmarks. The rooftop is one of the best evening spots in the city."},{h:"Hidden Gems",body:"Biergarten in Indiranagar has a rotating tap list of 12 Indian craft beers. Arbor Brewing Company in Domlur is the go-to for American-style IPAs with a great food menu."}]},
+    {id:11,cat:"City Guide",title:"The Perfect Day Trip from Bengaluru: 8 Destinations Within 3 Hours",date:"2025-02-05",read:6,views:11240,emoji:"🗺️",gradient:"linear-gradient(135deg,#0ea5e9,#3b82f6)",author:"Kavya Sharma",authorBg:"#0ea5e9",tags:["Travel","Day Trip","Bengaluru"],sections:[{h:"Nandi Hills (60 km)",body:"The most popular day trip from Bengaluru. The drive up the ghats is stunning and the summit offers panoramic views. Best in winter months when weather is cool."},{h:"Shivanasamudra Falls (130 km)",body:"India's second largest island waterfall at its most spectacular during monsoon. The drive through Mandya district is beautiful. Pack a picnic."}]},
+    {id:12,cat:"Wellness",title:"Mental Wellness Events Growing in Bengaluru",date:"2025-01-28",read:5,views:3410,emoji:"💚",gradient:"linear-gradient(135deg,#10b981,#6366f1)",author:"Meena Pillai",authorBg:"#10b981",tags:["Wellness","Mental Health","Community"],sections:[{h:"Mental Health Cafes",body:"A new format of informal cafe meetups focused on wellness conversations. Peer-led, not therapy, but offering safe spaces to discuss anxiety and burnout."},{h:"Weekend Workshops",body:"The Bengaluru Mindfulness Centre offers weekend workshops on meditation and breathwork. Sessions are typically ₹500–₹1500 and group sizes are kept small."}]},
+    {id:13,cat:"Music",title:"Carnatic to EDM: Bengaluru Bridges Classical and Contemporary",date:"2025-01-20",read:8,views:2950,emoji:"🎶",gradient:"linear-gradient(135deg,#dc2626,#f59e0b)",author:"Arjun Menon",authorBg:"#dc2626",tags:["Music","Carnatic","Culture"],sections:[{h:"Classical Roots",body:"Bengaluru has deep Carnatic roots. Chowdiah Memorial Hall remains the city's cultural anchor, hosting hundreds of classical musicians during the sabha season."},{h:"The Electronic Underground",body:"Clubs like The Humming Tree and events like Magnetic Fields have put Bengaluru on the global techno and house map, running parallel to its classical tradition."}]},
+    {id:14,cat:"Comedy",title:"Open Mic Night Guide: Crush Your First Set",date:"2025-01-15",read:4,views:4210,emoji:"🎤",gradient:"linear-gradient(135deg,#fbbf24,#ec4899)",author:"Karan Johari",authorBg:"#ec4899",tags:["Comedy","Open Mic","Beginner"],sections:[{h:"Finding Open Mics",body:"Bengaluru has 20+ regular open mics. The most beginner-friendly are at Pint Room (HSR Layout) and The Comedy Factory (Koramangala). Sign-up sheets open 30 minutes before the show."},{h:"Your First Five Minutes",body:"Write 3 jokes, not 1 extended bit. Open strong — best joke first. Don't apologize if a joke doesn't land. Bring 5 friends. Most importantly, perform even when you're terrified."}]},
+    {id:15,cat:"Art & Culture",title:"Bengaluru Theatre Revival: Shows to Watch",date:"2025-01-08",read:5,views:1980,emoji:"🎭",gradient:"linear-gradient(135deg,#8b5cf6,#ec4899)",author:"Ananya Krishnan",authorBg:"#8b5cf6",tags:["Theatre","Art","Culture"],sections:[{h:"Ranga Shankara",body:"Bengaluru's most beloved theatre seats just 330 people and hosts 400+ shows per year. Ticket prices (₹100–₹300) are kept intentionally low to keep theatre accessible to all."},{h:"Jagriti Theatre",body:"Jagriti in Whitefield hosts experimental and English-language productions, including visiting productions from Mumbai's Prithvi Theatre. The cafe is a lovely pre-show dinner spot."}]},
+    {id:16,cat:"Sports",title:"Bengaluru FC Season Review & What's Next",date:"2024-12-30",read:7,views:6750,emoji:"⚽",gradient:"linear-gradient(135deg,#3b82f6,#0ea5e9)",author:"Vikram Das",authorBg:"#3b82f6",tags:["Sports","Football","Bengaluru FC"],sections:[{h:"Season in Numbers",body:"14 wins from 22 games, 38 goals scored, and the best defensive record in the league. The playoffs exit was painful but the foundation for next season looks solid."},{h:"Youth Academy Graduates",body:"Three academy graduates made senior debuts this season. Watch out for midfielder Roshan Kumar and left-back Deepak Tangri in the coming campaign."}]},
+    {id:17,cat:"City Guide",title:"The Ultimate Koramangala Neighbourhood Guide 2025",date:"2024-12-22",read:6,views:9400,emoji:"🌆",gradient:"linear-gradient(135deg,#f97316,#a855f7)",author:"Kavya Sharma",authorBg:"#a855f7",tags:["City Guide","Koramangala","Bengaluru"],sections:[{h:"Startup Capital",body:"Koramangala's 5th and 7th Blocks are home to more funded startups per square kilometre than almost anywhere else in Asia. Co-working spaces and incubators have made it the city's startup nerve centre."},{h:"Food & Drink",body:"For breakfast: Eat Raja. For South Indian: Vidyarthi Bhavan. For dinner: The Thai Pavilion. For craft beer: Toit. For cocktails: The Permit Room."}]},
+    {id:18,cat:"Tech",title:"From Startup to Unicorn: Bengaluru Founder Stories 2024",date:"2024-12-15",read:9,views:7200,emoji:"🚀",gradient:"linear-gradient(135deg,#6366f1,#10b981)",author:"Rahul Verma",authorBg:"#6366f1",tags:["Tech","Startups","Founders"],sections:[{h:"The Year of the Comeback",body:"2024 was the year Bengaluru startups bounced back. More profitable exits and IPOs than any year in the previous decade. The mood on Lavelle Road shifted to cautious optimism."},{h:"Founders Who Defined 2024",body:"Zepto raised $1.4 billion. Meesho reached 140 million active users. These stories show what's possible when ambition meets execution in the right city."}]}
+  ];
+  for(var j=0;j<extra.length;j++){
+    var found=false;
+    for(var k=0;k<BLOG_POSTS.length;k++){if(BLOG_POSTS[k].id===extra[j].id){found=true;break;}}
+    if(!found)BLOG_POSTS.push(extra[j]);
+  }
+}
+
+// ── Render Post ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  var params=new URLSearchParams(window.location.search);
+  var id=parseInt(params.get('id'))||1;
+  var post=BLOG_POSTS.find(function(p){return p.id===id;});
+  if(!post){
+    document.getElementById('articleTitle').textContent='Post not found';
+    document.getElementById('articleBody').innerHTML='<p>The article you are looking for could not be found. <a href="blog.html" style="color:var(--accent)">Return to blog</a></p>';
+    return;
+  }
+
+  document.title=post.title+' – MANASA Blog';
+  document.getElementById('breadcrumbCat').textContent=post.cat;
+  document.getElementById('articleCatBadge').innerHTML='<span class="blog-cat-sm" style="margin-bottom:12px;display:inline-block">'+post.cat+'</span>';
+  document.getElementById('articleTitle').textContent=post.title;
+  document.getElementById('authorAvatar').textContent=post.author[0];
+  document.getElementById('authorAvatar').style.background=post.authorBg;
+  document.getElementById('authorName').textContent=post.author;
+  document.getElementById('articleDate').textContent=new Date(post.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('articleRead').textContent=post.read+' min read';
+  document.getElementById('articleViews').textContent=post.views.toLocaleString('en-IN')+' views';
+  document.getElementById('articleHero').style.background=post.gradient;
+  document.getElementById('articleEmoji').textContent=post.emoji;
+
+  // Body
+  var sections=post.sections||[];
+  var bodyHtml='<p style="font-size:17px;font-weight:500;color:var(--text);line-height:1.75;margin-bottom:28px">'+post.excerpt+'</p>';
+  sections.forEach(function(s){
+    bodyHtml+='<h2>'+s.h+'</h2><p>'+s.body+'</p>';
+  });
+  bodyHtml+='<div class="tip-box"><strong>💡 Pro Tip from MANASA</strong>Save this article and share it with a friend who loves Bengaluru as much as you do. Tag us on Instagram @manasaevents!</div>';
+  document.getElementById('articleBody').innerHTML=bodyHtml;
+
+  // Tags
+  document.getElementById('articleTags').innerHTML='<span style="font-size:13px;font-weight:600;color:var(--text-muted);margin-right:8px">Tags:</span>'+(post.tags||[]).map(function(t){return '<a href="blog.html?q='+encodeURIComponent(t)+'" class="tag">'+t+'</a>';}).join('');
+
+  // TOC
+  var toc='<a class="toc-item" href="#">&#x1F4D6; Introduction</a>';
+  sections.forEach(function(s,i){toc+='<a class="toc-item" href="#">'+(i+1)+'. '+s.h+'</a>';});
+  document.getElementById('tocList').innerHTML=toc;
+
+  // Related posts
+  var related=BLOG_POSTS.filter(function(p){return p.id!==id&&p.cat===post.cat;}).slice(0,3);
+  if(related.length<3)related=related.concat(BLOG_POSTS.filter(function(p){return p.id!==id&&p.cat!==post.cat;}).slice(0,3-related.length));
+  document.getElementById('relatedPosts').innerHTML=related.map(function(p){
+    return '<a class="related-card" href="blog-detail.html?id='+p.id+'">'
+      +'<div class="related-img" style="background:'+p.gradient+'">'+p.emoji+'</div>'
+      +'<div class="related-body"><div class="cat">'+p.cat+'</div><h4>'+p.title+'</h4>'
+      +'<div class="meta">'+new Date(p.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+' &middot; '+p.read+' min</div>'
+      +'</div></a>';
+  }).join('');
+
+  // Sidebar popular
+  var pop=[].concat(BLOG_POSTS).sort(function(a,b){return b.views-a.views;}).slice(0,4);
+  document.getElementById('sidebarPopular').innerHTML=pop.map(function(p,i){
+    return '<a class="popular-post" href="blog-detail.html?id='+p.id+'" style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;transition:transform .2s" onmouseover="this.style.transform=\'translateX(3px)\'" onmouseout="this.style.transform=\'\'">'
+      +'<div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--border);line-height:1;flex-shrink:0;width:28px">0'+(i+1)+'</div>'
+      +'<div><div style="font-size:13px;font-weight:600;line-height:1.4;margin-bottom:3px">'+p.title+'</div>'
+      +'<div style="font-size:11px;color:var(--text-dim)">'+p.views.toLocaleString('en-IN')+' views</div></div></a>';
+  }).join('');
+});
+
+// Reading progress
+window.addEventListener('scroll',function(){
+  var article=document.getElementById('articleMain');
+  if(!article)return;
+  var rect=article.getBoundingClientRect();
+  var total=article.offsetHeight-window.innerHeight;
+  var scrolled=Math.max(0,-rect.top);
+  var pct=total>0?Math.min(100,(scrolled/total)*100):0;
+  document.getElementById('readProgress').style.width=pct+'%';
+});
+
+function sharePost(platform){
+  var url=window.location.href;
+  var title=document.getElementById('articleTitle').textContent;
+  if(platform==='whatsapp')window.open('https://wa.me/?text='+encodeURIComponent(title+' '+url));
+  else if(platform==='twitter')window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(title)+'&url='+encodeURIComponent(url));
+  else if(platform==='facebook')window.open('https://facebook.com/sharer/sharer.php?u='+encodeURIComponent(url));
+  else{navigator.clipboard.writeText(url).catch(function(){});showToast('Link copied to clipboard! 🔗');}
+}
+
+function subscribeNewsletter2(){
+  var e=document.getElementById('newsletterEmail2').value.trim();
+  if(!e||!e.includes('@')){showToast('Please enter a valid email');return;}
+  showToast('Subscribed! See you every Friday 📬');
+  document.getElementById('newsletterEmail2').value='';
+}
+</script>
+</body>
+</html>

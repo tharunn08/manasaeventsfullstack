@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In – MANASA</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- db.js uses REST API — no sql.js needed -->
+</head>
+<body>
+
+<!-- ═══════════════════ NAVBAR ═══════════════════ -->
+<nav class="navbar scrolled">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <div class="nav-actions" style="margin-left:auto;display:flex;gap:10px;align-items:center">
+      <a href="index.html" class="btn-ghost">← Back to Home</a>
+      <a href="admin-login.html" style="background:rgba(255,92,53,0.12);border:1px solid var(--accent);color:var(--accent);
+                     padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px">
+        <i class="fas fa-shield-alt"></i> Admin Login
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════ AUTH CARD ═══════════════════ -->
+<div class="auth-page">
+  <div class="auth-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-logo">
+      <a href="index.html" class="logo" style="font-size:28px">MANASA<span class="logo-dot">.</span></a>
+      <p style="color:var(--text-muted);margin-top:6px;font-size:14px">Your event, your way.</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="signinTab" onclick="switchTab('signin')">Sign In</button>
+      <button class="auth-tab"        id="signupTab" onclick="switchTab('signup')">Create Account</button>
+    </div>
+
+    <!-- Social login -->
+    <div class="social-btns">
+      <button class="social-btn" onclick="socialLogin('Google')">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google
+      </button>
+      <button class="social-btn" onclick="socialLogin('Phone')">
+        <i class="fas fa-phone" style="color:#10b981"></i> Phone
+      </button>
+    </div>
+    <div class="auth-divider">or continue with email</div>
+
+    <!-- ── SIGN IN FORM ── -->
+    <div id="signinForm">
+      <div class="form-field">
+        <label>Email Address</label>
+        <input type="email" class="form-input" placeholder="you@example.com" id="signinEmail">
+      </div>
+      <div class="form-field">
+        <label>Password</label>
+        <div style="position:relative">
+          <input type="password" class="form-input" placeholder="••••••••"
+                 id="signinPassword" style="padding-right:44px"
+                 onkeydown="if(event.key==='Enter') signIn()">
+          <button type="button" onclick="togglePass('signinPassword')"
+                  style="position:absolute;right:14px;top:50%;transform:translateY(-50%);
+                         background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <div style="text-align:right;margin-bottom:20px">
+        <a href="#" style="font-size:13px;color:var(--accent)">Forgot password?</a>
+      </div>
+      <button type="button" class="btn-primary"
+              style="width:100%;justify-content:center;padding:14px;font-size:16px"
+              onclick="signIn()">
+        Sign In
+      </button>
+    </div>
+
+    <!-- ── SIGN UP FORM ── -->
+    <div id="signupForm" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-field">
+          <label>First Name</label>
+          <input type="text" class="form-input" placeholder="Kavya" id="signupFirst">
+        </div>
+        <div class="form-field">
+          <label>Last Name</label>
+          <input type="text" class="form-input" placeholder="Sharma" id="signupLast">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Email Address</label>
+        <input type="email" class="form-input" placeholder="you@example.com" id="signupEmail">
+      </div>
+      <div class="form-field">
+        <label>Phone Number</label>
+        <input type="tel" class="form-input" placeholder="+91 98765 43210" id="signupPhone">
+      </div>
+      <div class="form-field">
+        <label>Password</label>
+        <div style="position:relative">
+          <input type="password" class="form-input" placeholder="Min. 8 characters"
+                 id="signupPassword" style="padding-right:44px">
+          <button type="button" onclick="togglePass('signupPassword')"
+                  style="position:absolute;right:14px;top:50%;transform:translateY(-50%);
+                         background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="display:flex;align-items:flex-start;gap:10px;font-size:13px;
+                      color:var(--text-muted);cursor:pointer">
+          <input type="checkbox" id="termsCheck" style="margin-top:3px;accent-color:var(--accent)">
+          I agree to MANASA's
+          <a href="#" style="color:var(--accent)">Terms of Service</a> and
+          <a href="#" style="color:var(--accent)">Privacy Policy</a>
+        </label>
+      </div>
+      <button type="button" class="btn-primary"
+              style="width:100%;justify-content:center;padding:14px;font-size:16px"
+              onclick="signUp()">
+        Create Account
+      </button>
+    </div>
+
+    <p style="text-align:center;font-size:13px;color:var(--text-dim);margin-top:20px">
+      By signing in you agree to our
+      <a href="#" style="color:var(--accent)">Terms</a> &amp;
+      <a href="#" style="color:var(--accent)">Privacy Policy</a>
+    </p>
+  </div>
+</div>
+
+
+
+
+</div>
+
+<!-- ═══════════════════ SCRIPTS ═══════════════════ -->
+<script src="app.js"></script>
+<script src="db.js"></script>
+<script>
+// ── Initialise DB on page load ────────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  initDB().catch(function(err) {
+    console.error('MANASA: DB init failed', err);
+    showToast('Database failed to load. Please refresh.');
+  });
+});
+
+// ── Tab switcher ──────────────────────────────────────────────
+function switchTab(tab) {
+  document.getElementById('signinTab').classList.toggle('active', tab === 'signin');
+  document.getElementById('signupTab').classList.toggle('active', tab === 'signup');
+  document.getElementById('signinForm').style.display  = tab === 'signin' ? 'block' : 'none';
+  document.getElementById('signupForm').style.display  = tab === 'signup' ? 'block' : 'none';
+}
+
+// ── Password visibility toggle ────────────────────────────────
+function togglePass(id) {
+  var inp = document.getElementById(id);
+  inp.type = (inp.type === 'password') ? 'text' : 'password';
+}
+
+// ── SIGN IN — reads from SQLite, awaits async dbLogin ─────────
+async function signIn() {
+  var email    = document.getElementById('signinEmail').value.trim();
+  var password = document.getElementById('signinPassword').value;
+
+  if (!email || !password) {
+    showToast('Please fill in all fields');
+    return;
+  }
+
+  showToast('Signing in…');
+  await initDB();
+
+  // FIX: dbLogin is async — must await it
+  var result = await dbLogin({ email: email, password: password });
+
+  if (!result.success) {
+    showToast('❌ ' + result.error);
+    return;
+  }
+
+  localStorage.setItem('manasaUser', JSON.stringify({
+    email:  result.user.email,
+    name:   result.user.name,
+    joined: result.user.joined_at
+  }));
+  showToast('Welcome back, ' + result.user.name + '! 🎉');
+  setTimeout(function() { window.location.href = 'dashboard.html'; }, 1200);
+}
+
+// ── SIGN UP — inserts into SQLite, awaits async dbRegister ────
+async function signUp() {
+  var first    = document.getElementById('signupFirst').value.trim();
+  var last     = document.getElementById('signupLast').value.trim();
+  var email    = document.getElementById('signupEmail').value.trim();
+  var phone    = document.getElementById('signupPhone').value.trim();
+  var password = document.getElementById('signupPassword').value;
+  var terms    = document.getElementById('termsCheck').checked;
+
+  if (!first || !email || !password) {
+    showToast('Please fill in required fields');
+    return;
+  }
+  if (password.length < 8) {
+    showToast('Password must be at least 8 characters');
+    return;
+  }
+  if (!terms) {
+    showToast('Please accept the terms to continue');
+    return;
+  }
+
+  showToast('Creating your account…');
+  await initDB();
+
+  // FIX: dbRegister is async — must await it
+  var result = await dbRegister({
+    firstName: first,
+    lastName:  last,
+    email:     email,
+    phone:     phone,
+    password:  password
+  });
+
+  if (!result.success) {
+    showToast('❌ ' + result.error);
+    return;
+  }
+
+  localStorage.setItem('manasaUser', JSON.stringify({
+    email:  result.user.email,
+    name:   result.user.name,
+    joined: result.user.joined_at
+  }));
+  showToast('Welcome to MANASA, ' + first + '! 🎉');
+  setTimeout(function() { window.location.href = 'index.html'; }, 1200);
+}
+
+// ── SOCIAL LOGIN — awaits async dbSocialLogin ─────────────────
+async function socialLogin(provider) {
+  showToast('Signing in with ' + provider + '…');
+  await initDB();
+
+  // FIX: dbSocialLogin is async — must await it
+  var result = await dbSocialLogin({
+    name:     'Demo User',
+    email:    'demo@manasa.events',
+    provider: provider
+  });
+
+  if (!result.success) {
+    showToast('❌ ' + result.error);
+    return;
+  }
+
+  localStorage.setItem('manasaUser', JSON.stringify({
+    email:  result.user.email,
+    name:   result.user.name,
+    joined: result.user.joined_at
+  }));
+  showToast('Signed in with ' + provider + '! 🎉');
+  setTimeout(function() { window.location.href = 'dashboard.html'; }, 1200);
+}
+
+</script>
+</body>
+</html>

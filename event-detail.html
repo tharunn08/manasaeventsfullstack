@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Detail – MANASA</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html" class="active">Events</a></li>
+      <li><a href="organizer.html">Organizers</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="login.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="organizer.html">Organizers</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html" class="btn-primary" style="display:inline-block;margin-top:12px">Get Started</a>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div style="background:var(--bg2);border-bottom:1px solid var(--border);padding:80px 24px 16px;">
+  <div style="max-width:1200px;margin:0 auto;font-size:13px;color:var(--text-muted);">
+    <a href="index.html" style="color:var(--text-dim)">Home</a>
+    <span style="margin:0 8px;color:var(--text-dim)">/</span>
+    <a href="events.html" style="color:var(--text-dim)">Events</a>
+    <span style="margin:0 8px;color:var(--text-dim)">/</span>
+    <span id="breadcrumbTitle">Event</span>
+  </div>
+</div>
+
+<div class="event-detail-layout" id="eventDetailLayout">
+  <div id="eventMain">Loading&hellip;</div>
+  <div id="eventSidebar"></div>
+</div>
+
+<!-- RELATED EVENTS -->
+<section class="section" style="background:var(--bg2);padding-top:60px;">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">You might also like</div>
+      <h2>Similar Events</h2>
+    </div>
+    <div class="events-grid" id="relatedGrid"></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">&#11088; Reviews</div>
+      <h2>What Attendees Say</h2>
+    </div>
+    <div class="reviews-grid" id="reviewsGrid">
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>"Absolutely amazing experience! The organization was top-notch and the atmosphere was electrifying."</p>
+        <div class="reviewer"><div class="avatar" style="background:#f97316">S</div><span>Sunita K., Koramangala</span></div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>"Bought tickets through MANASA — super easy process. The QR code worked perfectly at the gate!"</p>
+        <div class="reviewer"><div class="avatar" style="background:#8b5cf6">R</div><span>Rahul M., Whitefield</span></div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+        <p>"Great event, would have loved more food options. But the main experience was worth every rupee."</p>
+        <div class="reviewer"><div class="avatar" style="background:#06d6a0">D</div><span>Divya S., Indiranagar</span></div>
+      </div>
+    </div>
+
+    <!-- WRITE REVIEW -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-top:24px;">
+      <h3 style="font-family:var(--font-display);font-size:18px;margin-bottom:20px;">Write a Review</h3>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:13px;color:var(--text-muted);display:block;margin-bottom:8px;">Your Rating</label>
+        <div id="starRating" style="display:flex;gap:8px;font-size:28px;cursor:pointer;">
+          <span onclick="setRating(1)">&#9734;</span>
+          <span onclick="setRating(2)">&#9734;</span>
+          <span onclick="setRating(3)">&#9734;</span>
+          <span onclick="setRating(4)">&#9734;</span>
+          <span onclick="setRating(5)">&#9734;</span>
+        </div>
+      </div>
+      <textarea class="form-textarea" placeholder="Share your experience&#8230;" id="reviewText" style="margin-bottom:16px;"></textarea>
+      <button class="btn-primary" onclick="submitReview()">Submit Review</button>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+      <p>Bengaluru's premier event discovery &amp; ticketing platform.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="events.html">Browse Events</a>
+      <a href="organizer.html">Organizers</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p><i class="fas fa-phone"></i> 7411038339</p>
+      <p><i class="fas fa-map-marker-alt"></i><a href="https://share.google/alKB1wMb4D0Hpw6tw" target="_blank"> View on Map</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom"><p>&copy; 2025 MANASA. All rights reserved.</p></div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+var urlParams = new URLSearchParams(window.location.search);
+var eventId = parseInt(urlParams.get('id')) || 1;
+var currentEvent = EVENTS.find(function(e) { return e.id === eventId; }) || EVENTS[0];
+var qty = 1;
+var userRating = 0;
+
+document.addEventListener('DOMContentLoaded', function() {
+  var e = currentEvent;
+  document.title = e.title + ' – MANASA';
+  document.getElementById('breadcrumbTitle').textContent = e.title;
+
+  // Build tags HTML
+  var tagsHtml = e.tags.map(function(t) {
+    return '<span class="tag">' + t + '</span>';
+  }).join('');
+
+  document.getElementById('eventMain').innerHTML =
+    '<div class="event-hero-img" style="background:' + e.gradient + '">'
+    + '<span>' + e.emoji + '</span>'
+    + '</div>'
+    + '<div class="event-detail-title">' + e.title + '</div>'
+    + '<div class="event-detail-meta">'
+    + '<div class="meta-chip"><i class="far fa-calendar"></i> ' + formatDate(e.date) + '</div>'
+    + '<div class="meta-chip"><i class="far fa-clock"></i> ' + e.time + '</div>'
+    + '<div class="meta-chip"><i class="fas fa-map-marker-alt"></i> ' + e.venue + '</div>'
+    + '<div class="meta-chip"><i class="fas fa-tag"></i> ' + e.category + '</div>'
+    + '<div class="meta-chip" style="color:#fbbf24"><i class="fas fa-star"></i> ' + e.rating + ' (' + e.reviews + ' reviews)</div>'
+    + '</div>'
+    + '<div class="event-description">'
+    + '<h3>About This Event</h3>'
+    + '<p>' + e.description + '</p>'
+    + '<p>Join hundreds of Bengalureans for an unforgettable experience. Whether you\'re a first-timer or a regular, this event promises to deliver memories that last a lifetime.</p>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">' + tagsHtml + '</div>'
+    + '</div>'
+    + '<div style="margin-top:36px">'
+    + '<h3 style="font-family:var(--font-display);font-size:20px;margin-bottom:16px">Venue</h3>'
+    + '<div style="border-radius:12px;overflow:hidden;border:1px solid var(--border)">'
+    + '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d497695.0974759938!2d77.35073573299991!3d12.954517030611606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4fe0!2s' + encodeURIComponent(e.venue) + '!5e0!3m2!1sen!2sin!4v1690000000000" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>'
+    + '</div></div>';
+
+  // Sidebar
+  document.getElementById('eventSidebar').innerHTML =
+    '<div class="booking-card">'
+    + '<div class="booking-price">' + (e.price === 0 ? 'FREE' : '&#8377;' + e.price) + ' <span>per ticket</span></div>'
+    + '<p>' + (e.price === 0 ? 'Free entry — just register your spot!' : 'Limited seats available. Book now!') + '</p>'
+    + '<label style="font-size:13px;color:var(--text-muted);display:block;margin-bottom:10px">Number of Tickets</label>'
+    + '<div class="qty-selector">'
+    + '<button class="qty-btn" onclick="changeQty(-1)">&minus;</button>'
+    + '<span class="qty-num" id="qtyNum">1</span>'
+    + '<button class="qty-btn" onclick="changeQty(1)">+</button>'
+    + '</div>'
+    + '<div class="booking-total"><span>Total</span><span id="totalPrice">' + (e.price === 0 ? 'FREE' : '&#8377;' + e.price) + '</span></div>'
+    + '<button class="btn-primary" style="width:100%;justify-content:center;font-size:16px;padding:16px" onclick="goToBooking()'>'
+    + (e.price === 0 ? 'Register for Free' : 'Book &amp; Pay') + '</button>'
+    + '<button class="btn-outline" style="width:100%;justify-content:center;margin-top:10px;padding:14px" onclick="toggleSaveDetail()">'
+    + '<i class="far fa-heart" id="saveIcon"></i> Save Event</button>'
+    + '<div class="organizer-info">'
+    + '<div class="org-avatar">M</div>'
+    + '<div class="org-info"><span>Organized by</span><strong>MANASA Events</strong></div>'
+    + '</div></div>'
+    + '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-top:16px">'
+    + '<h4 style="font-family:var(--font-display);font-size:15px;margin-bottom:14px">Share This Event</h4>'
+    + '<div style="display:flex;gap:10px">'
+    + '<button onclick="shareEvent(\'whatsapp\')" style="flex:1;background:rgba(37,211,102,0.12);border:none;color:#25d366;padding:10px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px"><i class="fab fa-whatsapp"></i> WhatsApp</button>'
+    + '<button onclick="shareEvent(\'twitter\')" style="flex:1;background:rgba(29,161,242,0.12);border:none;color:#1da1f2;padding:10px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px"><i class="fab fa-twitter"></i> Twitter</button>'
+    + '<button onclick="shareEvent(\'copy\')" style="flex:1;background:var(--surface2);border:none;color:var(--text-muted);padding:10px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px"><i class="fas fa-link"></i> Copy</button>'
+    + '</div></div>';
+
+  // Related events
+  var related = EVENTS.filter(function(ev) { return ev.id !== e.id && ev.category === e.category; }).slice(0, 3);
+  if (related.length < 3) {
+    var extra = EVENTS.filter(function(ev) { return ev.id !== e.id && ev.category !== e.category; }).slice(0, 3 - related.length);
+    related = related.concat(extra);
+  }
+  document.getElementById('relatedGrid').innerHTML = related.map(function(ev) { return createEventCard(ev); }).join('');
+
+  // Check saved state
+  var saved = JSON.parse(localStorage.getItem('savedEvents') || '[]');
+  if (saved.includes(e.id)) {
+    var icon = document.getElementById('saveIcon');
+    if (icon) { icon.className = 'fas fa-heart'; icon.style.color = '#ff5c35'; }
+  }
+});
+
+function changeQty(delta) {
+  qty = Math.max(1, Math.min(10, qty + delta));
+  document.getElementById('qtyNum').textContent = qty;
+  var total = currentEvent.price * qty;
+  document.getElementById('totalPrice').textContent = currentEvent.price === 0 ? 'FREE' : '&#8377;' + total.toLocaleString('en-IN');
+}
+
+function goToBooking() {
+  window.location.href = 'booking.html?id=' + currentEvent.id;
+}
+
+function confirmBooking() {
+  goToBooking();
+}
+
+function toggleSaveDetail() {
+  var saved = JSON.parse(localStorage.getItem('savedEvents') || '[]');
+  var icon = document.getElementById('saveIcon');
+  if (saved.includes(currentEvent.id)) {
+    saved = saved.filter(function(s) { return s !== currentEvent.id; });
+    if (icon) { icon.className = 'far fa-heart'; icon.style.color = ''; }
+    showToast('Removed from saved');
+  } else {
+    saved.push(currentEvent.id);
+    if (icon) { icon.className = 'fas fa-heart'; icon.style.color = '#ff5c35'; }
+    showToast('Event saved! ❤️');
+  }
+  localStorage.setItem('savedEvents', JSON.stringify(saved));
+}
+
+function shareEvent(platform) {
+  var url = window.location.href;
+  var text = 'Check out ' + currentEvent.title + ' on MANASA Events!';
+  if (platform === 'whatsapp') window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url));
+  else if (platform === 'twitter') window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url));
+  else { navigator.clipboard.writeText(url).catch(function(){}); showToast('Link copied to clipboard!'); }
+}
+
+function setRating(n) {
+  userRating = n;
+  var stars = document.querySelectorAll('#starRating span');
+  stars.forEach(function(s, i) {
+    s.textContent = i < n ? '★' : '☆';
+    s.style.color = i < n ? '#fbbf24' : '';
+  });
+}
+
+function submitReview() {
+  var text = document.getElementById('reviewText').value.trim();
+  if (!userRating) { showToast('Please select a rating first!'); return; }
+  if (!text) { showToast('Please write your review!'); return; }
+  showToast('Review submitted! Thank you ⭐');
+  document.getElementById('reviewText').value = '';
+  setRating(0);
+}
+</script>
+</body>
+</html>

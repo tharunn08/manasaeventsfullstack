@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organizer Dashboard – MANASA</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="organizer.html" class="active">Organizers</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="login.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="organizer.html">Organizers</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html" class="btn-primary" style="display:inline-block;margin-top:12px">Get Started</a>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <div class="dashboard-header">
+    <div>
+      <div class="section-tag">&#129489;&#8205;&#128188; Organizer Panel</div>
+      <h1>Your Dashboard</h1>
+    </div>
+    <button class="btn-primary" onclick="showCreateEvent()">
+      <i class="fas fa-plus"></i> Create Event
+    </button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(255,92,53,0.12)"><i class="fas fa-calendar-check" style="color:var(--accent)"></i></div>
+      <h4>Total Events</h4>
+      <div class="big-num">12</div>
+      <div class="trend">+3 this month</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(168,85,247,0.12)"><i class="fas fa-ticket-alt" style="color:#a855f7"></i></div>
+      <h4>Tickets Sold</h4>
+      <div class="big-num">1,248</div>
+      <div class="trend">+18% vs last month</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(6,214,160,0.12)"><i class="fas fa-rupee-sign" style="color:var(--accent3)"></i></div>
+      <h4>Revenue</h4>
+      <div class="big-num">&#8377;3.2L</div>
+      <div class="trend">+24% vs last month</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(59,130,246,0.12)"><i class="fas fa-eye" style="color:#3b82f6"></i></div>
+      <h4>Profile Views</h4>
+      <div class="big-num">8,430</div>
+      <div class="trend">+12% this week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(251,191,36,0.12)"><i class="fas fa-star" style="color:#fbbf24"></i></div>
+      <h4>Avg. Rating</h4>
+      <div class="big-num">4.8</div>
+      <div class="trend">From 420 reviews</div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- LEFT -->
+    <div class="dashboard-main">
+      <!-- EVENTS TABLE -->
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3>Your Events</h3>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span id="orgEventsCount" style="font-size:12px;color:var(--text-muted);background:var(--surface2);padding:3px 10px;border-radius:20px"></span>
+            <button class="btn-sm" style="font-size:11px;padding:6px 10px" onclick="clearCreatedEvents()"><i class="fas fa-trash-alt"></i> Clear My Events</button>
+          </div>
+        </div>
+        <div id="orgEventsList"></div>
+      </div>
+
+      <!-- ANALYTICS CHART -->
+      <div class="panel">
+        <h3>Ticket Sales (Last 7 Days)</h3>
+        <div id="salesChart" style="display:flex;align-items:flex-end;gap:8px;height:120px;margin-top:12px"></div>
+      </div>
+
+      <!-- RECENT BOOKINGS -->
+      <div class="panel">
+        <h3>Recent Bookings</h3>
+        <div id="recentBookings"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="dashboard-side">
+      <!-- TOP PERFORMING -->
+      <div class="panel">
+        <h3>Top Performing</h3>
+        <div id="topPerforming"></div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="panel">
+        <h3>Quick Actions</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn-primary" style="justify-content:center" onclick="showCreateEvent()"><i class="fas fa-plus"></i> Create New Event</button>
+          <button class="btn-outline" style="justify-content:center" onclick="showToast('Feature coming soon!')"><i class="fas fa-download"></i> Export Attendee List</button>
+          <button class="btn-outline" style="justify-content:center" onclick="showToast('Feature coming soon!')"><i class="fas fa-bullhorn"></i> Send Announcement</button>
+          <button class="btn-outline" style="justify-content:center" onclick="showToast('Feature coming soon!')"><i class="fas fa-chart-line"></i> Full Analytics</button>
+        </div>
+      </div>
+
+      <!-- PROFILE PREVIEW -->
+      <div class="panel">
+        <h3>Your Profile</h3>
+        <div style="text-align:center;padding:16px 0">
+          <div class="org-avatar" style="width:64px;height:64px;font-size:24px;margin:0 auto 12px">M</div>
+          <img src="logo2.jpeg" alt="MANASA Events" style="height:40px;width:auto;border-radius:8px;">
+          <p style="font-size:13px;color:var(--text-muted);margin:4px 0">Verified Organizer &#10003;</p>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Bengaluru, Karnataka</p>
+          <button class="btn-sm" style="width:100%;padding:10px" onclick="showToast('Edit profile coming soon!')">Edit Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE EVENT MODAL -->
+<div id="createEventModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;overflow-y:auto;backdrop-filter:blur(8px)">
+  <div style="max-width:640px;margin:80px auto;padding:24px">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px">
+        <h2 style="font-family:var(--font-display);font-size:24px">Create New Event</h2>
+        <button onclick="document.getElementById('createEventModal').style.display='none'" style="background:var(--surface2);border:none;color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px">&times;</button>
+      </div>
+      <div class="form-field">
+        <label>Event Title *</label>
+        <input class="form-input" placeholder="e.g. Bengaluru Jazz Night" id="newTitle">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="form-grid-2">
+        <div class="form-field">
+          <label>Category *</label>
+          <select class="filter-select form-input" id="newCat">
+            <option>Music</option><option>Tech</option><option>Food</option><option>Sports</option><option>Comedy</option><option>Wellness</option><option>Workshop</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Date *</label>
+          <input type="date" class="form-input" id="newDate">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="form-grid-2">
+        <div class="form-field">
+          <label>Time *</label>
+          <input type="time" class="form-input" id="newTime">
+        </div>
+        <div class="form-field">
+          <label>Ticket Price (&#8377;)</label>
+          <input type="number" class="form-input" placeholder="0 for free" id="newPrice" min="0">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Venue / Location *</label>
+        <input class="form-input" placeholder="e.g. Palace Grounds, Bengaluru" id="newVenue">
+      </div>
+      <div class="form-field">
+        <label>Total Tickets Available</label>
+        <input type="number" class="form-input" placeholder="e.g. 200" id="newTickets">
+      </div>
+      <div class="form-field">
+        <label>Description *</label>
+        <textarea class="form-textarea" placeholder="Describe your event&#8230;" id="newDesc"></textarea>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:8px">
+        <button class="btn-primary" style="flex:1;justify-content:center" onclick="submitEvent(false)">Publish Event</button>
+        <button class="btn-outline" style="flex:1;justify-content:center" onclick="submitEvent(true)">Save as Draft</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a></div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p><i class="fas fa-phone"></i> 7411038339</p>
+      <p><i class="fas fa-map-marker-alt"></i><a href="https://share.google/alKB1wMb4D0Hpw6tw" target="_blank"> View on Map</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom"><p>&copy; 2025 MANASA. All rights reserved.</p></div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+var ORG_EVENTS = [
+  { title: 'EDM Night Out', date: 'Mar 29', tickets: 450, sold: 380, status: 'live', emoji: '🎶', gradient: 'linear-gradient(135deg,#f97316,#ef4444)' },
+  { title: 'AI Workshop Series', date: 'Apr 5', tickets: 80, sold: 62, status: 'upcoming', emoji: '🤖', gradient: 'linear-gradient(135deg,#6366f1,#8b5cf6)' },
+  { title: 'Food Carnival 2025', date: 'Apr 12', tickets: 200, sold: 0, status: 'upcoming', emoji: '🍜', gradient: 'linear-gradient(135deg,#10b981,#06b6d4)' },
+  { title: 'New Year Bash 2024', date: 'Dec 31', tickets: 600, sold: 600, status: 'ended', emoji: '🎉', gradient: 'linear-gradient(135deg,#f97316,#fbbf24)' }
+];
+
+var CHART_DATA = [42, 67, 55, 89, 73, 96, 84];
+var CHART_DAYS = ['M','T','W','T','F','S','S'];
+
+var RECENT_BOOKINGS = [
+  { name: 'Ananya R.', event: 'EDM Night Out', tickets: 2, amount: '&#8377;1,598', time: '2h ago' },
+  { name: 'Karthik M.', event: 'AI Workshop Series', tickets: 1, amount: '&#8377;999', time: '4h ago' },
+  { name: 'Kavya S.', event: 'EDM Night Out', tickets: 4, amount: '&#8377;3,196', time: '6h ago' },
+  { name: 'Rohan T.', event: 'Food Carnival 2025', tickets: 2, amount: 'FREE', time: '8h ago' }
+];
+
+var TOP_PERFORMING = [
+  { title: 'EDM Night Out', pct: 84, emoji: '🎶' },
+  { title: 'AI Workshop', pct: 78, emoji: '🤖' },
+  { title: 'Food Carnival', pct: 60, emoji: '🍜' }
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Events list (includes localStorage events)
+  renderOrgEvents();
+
+  // Chart
+  document.getElementById('salesChart').innerHTML = CHART_DATA.map(function(v, i) {
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px">'
+      + '<span style="font-size:11px;color:var(--text-muted)">' + v + '</span>'
+      + '<div style="width:100%;background:linear-gradient(180deg,var(--accent),rgba(255,92,53,0.3));border-radius:4px 4px 0 0;height:' + (v * 1.1) + 'px;transition:height 0.5s"></div>'
+      + '<span style="font-size:10px;color:var(--text-dim)">' + CHART_DAYS[i] + '</span>'
+      + '</div>';
+  }).join('');
+
+  // Recent bookings
+  document.getElementById('recentBookings').innerHTML = RECENT_BOOKINGS.map(function(b) {
+    return '<div class="event-row">'
+      + '<div class="org-avatar" style="width:40px;height:40px;font-size:15px;flex-shrink:0">' + b.name.charAt(0) + '</div>'
+      + '<div class="event-row-info"><strong>' + b.name + '</strong><span>' + b.event + ' &middot; ' + b.tickets + ' ticket' + (b.tickets > 1 ? 's' : '') + '</span></div>'
+      + '<span style="font-family:var(--font-display);font-weight:700;color:var(--accent3)">' + b.amount + '</span>'
+      + '<span style="font-size:12px;color:var(--text-dim)">' + b.time + '</span>'
+      + '</div>';
+  }).join('');
+
+  // Top performing
+  document.getElementById('topPerforming').innerHTML = TOP_PERFORMING.map(function(e) {
+    return '<div style="margin-bottom:18px">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+      + '<span style="font-size:14px">' + e.emoji + ' ' + e.title + '</span>'
+      + '<span style="font-size:13px;font-weight:700;color:var(--accent)">' + e.pct + '%</span>'
+      + '</div>'
+      + '<div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden">'
+      + '<div style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;width:' + e.pct + '%;transition:width 1s"></div>'
+      + '</div></div>';
+  }).join('');
+});
+
+function showCreateEvent() {
+  document.getElementById('createEventModal').style.display = 'block';
+}
+
+function submitEvent(draft) {
+  var title = document.getElementById('newTitle').value.trim();
+  var cat = document.getElementById('newCat').value;
+  var date = document.getElementById('newDate').value;
+  var time = document.getElementById('newTime').value;
+  var price = document.getElementById('newPrice').value;
+  var venue = document.getElementById('newVenue').value.trim();
+  var tickets = document.getElementById('newTickets').value;
+  var desc = document.getElementById('newDesc').value.trim();
+  if (!title) { showToast('Please enter an event title'); return; }
+  if (!date) { showToast('Please select a date'); return; }
+  if (!venue) { showToast('Please enter a venue'); return; }
+
+  // Build new event object
+  var catEmojis = { Music:'🎵', Tech:'💻', Food:'🍜', Sports:'🏃', Comedy:'😂', Wellness:'🧘', Workshop:'🎨' };
+  var catGradients = { Music:'linear-gradient(135deg,#f97316,#ef4444)', Tech:'linear-gradient(135deg,#6366f1,#8b5cf6)', Food:'linear-gradient(135deg,#10b981,#06b6d4)', Sports:'linear-gradient(135deg,#ef4444,#f97316)', Comedy:'linear-gradient(135deg,#fbbf24,#f97316)', Wellness:'linear-gradient(135deg,#06d6a0,#10b981)', Workshop:'linear-gradient(135deg,#ec4899,#a855f7)' };
+  var dateFormatted = date ? new Date(date).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}) : '—';
+  var timeFormatted = time ? (function(t){ var p=t.split(':'); var h=+p[0]; var m=p[1]; var s=h>=12?'PM':'AM'; h=h%12||12; return h+':'+(m||'00')+' '+s; })(time) : '';
+
+  var newEvent = {
+    id: 'org_' + Date.now(),
+    title: title,
+    category: cat.toLowerCase(),
+    date: date,
+    dateFormatted: dateFormatted,
+    time: timeFormatted,
+    venue: venue,
+    price: price ? parseInt(price) : 0,
+    tickets: tickets ? parseInt(tickets) : 0,
+    sold: 0,
+    status: draft ? 'draft' : 'upcoming',
+    emoji: catEmojis[cat] || '🎉',
+    gradient: catGradients[cat] || 'linear-gradient(135deg,#f97316,#ef4444)',
+    description: desc,
+    createdAt: new Date().toISOString()
+  };
+
+  // Save to localStorage
+  var storedEvents = JSON.parse(localStorage.getItem('manasa_org_events') || '[]');
+  storedEvents.unshift(newEvent);
+  localStorage.setItem('manasa_org_events', JSON.stringify(storedEvents));
+
+  document.getElementById('createEventModal').style.display = 'none';
+  showToast(draft ? '"' + title + '" saved as draft 📝' : '"' + title + '" published successfully! 🎉');
+
+  // Reset form
+  ['newTitle','newDate','newTime','newVenue','newTickets','newDesc','newPrice'].forEach(function(id) {
+    document.getElementById(id).value = '';
+  });
+
+  // Refresh the events list
+  renderOrgEvents();
+}
+
+function clearCreatedEvents() {
+  if (confirm('Remove all your created events from the list?')) {
+    localStorage.removeItem('manasa_org_events');
+    renderOrgEvents();
+    showToast('Created events cleared');
+  }
+}
+
+function renderOrgEvents() {
+  var stored = JSON.parse(localStorage.getItem('manasa_org_events') || '[]');
+  var all = stored.concat(ORG_EVENTS);
+  var countEl = document.getElementById('orgEventsCount');
+  if (countEl) countEl.textContent = all.length + ' event' + (all.length !== 1 ? 's' : '');
+  document.getElementById('orgEventsList').innerHTML = all.map(function(e) {
+    var isNew = String(e.id).startsWith('org_');
+    return '<div class="event-row" style="' + (isNew ? 'border-left:3px solid var(--accent);padding-left:12px;' : '') + '">'
+      + '<div class="event-row-thumb" style="background:' + e.gradient + '">' + e.emoji + '</div>'
+      + '<div class="event-row-info"><strong>' + e.title + '</strong>'
+      + '<span>' + (e.dateFormatted || e.date) + (e.time ? ' · ' + e.time : '') + ' · ' + (e.venue || '') + '</span>'
+      + '<span>' + (e.sold || 0) + (e.tickets ? '/' + e.tickets : '') + ' tickets sold</span></div>'
+      + '<span class="status-badge status-' + e.status + '">' + e.status + '</span>'
+      + '<div class="event-row-action">'
+      + (isNew ? '<button class="btn-sm" style="background:#fee2e2;color:#dc2626;border:none;cursor:pointer" onclick="deleteOrgEvent(\'' + e.id + '\')"><i class="fas fa-trash"></i></button>' : '')
+      + '<button class="btn-sm" onclick="showToast(\'Edit coming soon!\')"><i class="fas fa-edit"></i></button>'
+      + '<button class="btn-sm" onclick="showToast(\'Analytics coming soon!\')"><i class="fas fa-chart-bar"></i></button>'
+      + '</div></div>';
+  }).join('');
+}
+
+function deleteOrgEvent(id) {
+  var stored = JSON.parse(localStorage.getItem('manasa_org_events') || '[]');
+  stored = stored.filter(function(e) { return e.id !== id; });
+  localStorage.setItem('manasa_org_events', JSON.stringify(stored));
+  renderOrgEvents();
+  showToast('Event deleted');
+}
+</script>
+</body>
+</html>

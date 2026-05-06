@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MANASA – Discover Local Events</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="organizer.html">Organizers</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="admin-login.html" class="btn-ghost" style="color:var(--accent);border-color:var(--accent)"><i class="fas fa-shield-alt"></i> Admin</a>
+      <a href="login.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="organizer.html">Organizers</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html" class="btn-primary" style="display:inline-block;margin-top:12px">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="pulse-dot"></span> Live events near you</div>
+    <h1 class="hero-title">Discover Events<br>That Move <em>You</em></h1>
+    <p class="hero-sub">Concerts, tech meetups, food fests, workshops &amp; more — all in one place. Bengaluru's premier event discovery platform.</p>
+    <div class="search-bar">
+      <div class="search-field">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search events, artists, venues&#8230;" id="heroSearch">
+      </div>
+      <div class="search-divider"></div>
+      <div class="search-field">
+        <i class="fas fa-map-marker-alt"></i>
+        <input type="text" placeholder="Bengaluru, KA" value="Bengaluru, KA">
+      </div>
+      <button class="search-btn" onclick="heroSearchGo()">Search</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">2,400+</span><span class="stat-label">Events</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">180+</span><span class="stat-label">Venues</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">50K+</span><span class="stat-label">Happy Goers</span></div>
+    </div>
+  </div>
+  <div class="hero-cards">
+    <div class="float-card fc1">
+      <div class="fc-img" style="background:linear-gradient(135deg,#f97316,#ef4444)"><i class="fas fa-music"></i></div>
+      <div><strong>EDM Night Out</strong><br><small>9 May &middot; Palace Grounds</small></div>
+    </div>
+    <div class="float-card fc2">
+      <div class="fc-img" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6)"><i class="fas fa-laptop-code"></i></div>
+      <div><strong>DevFest 2026</strong><br><small>11 May &middot; NIMHANS Conv.</small></div>
+    </div>
+    <div class="float-card fc3">
+      <div class="fc-img" style="background:linear-gradient(135deg,#10b981,#06b6d4)"><i class="fas fa-utensils"></i></div>
+      <div><strong>Street Food Carnival</strong><br><small>3 May &middot; Cubbon Park</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="section categories-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Browse by</div>
+      <h2>Categories</h2>
+    </div>
+    <div class="categories-grid">
+      <a href="events.html?cat=music" class="cat-card cat-music">
+        <div class="cat-icon"><i class="fas fa-music"></i></div>
+        <h3>Music</h3>
+        <p>Concerts, gigs &amp; festivals</p>
+        <span class="cat-count">320 events</span>
+      </a>
+      <a href="events.html?cat=tech" class="cat-card cat-tech">
+        <div class="cat-icon"><i class="fas fa-microchip"></i></div>
+        <h3>Tech</h3>
+        <p>Meetups, hackathons &amp; talks</p>
+        <span class="cat-count">185 events</span>
+      </a>
+      <a href="events.html?cat=food" class="cat-card cat-food">
+        <div class="cat-icon"><i class="fas fa-utensils"></i></div>
+        <h3>Food &amp; Drink</h3>
+        <p>Festivals, tastings &amp; pop-ups</p>
+        <span class="cat-count">210 events</span>
+      </a>
+      <a href="events.html?cat=sports" class="cat-card cat-sports">
+        <div class="cat-icon"><i class="fas fa-person-running"></i></div>
+        <h3>Sports</h3>
+        <p>Matches, marathons &amp; fitness</p>
+        <span class="cat-count">140 events</span>
+      </a>
+      <a href="events.html?cat=art" class="cat-card cat-art">
+        <div class="cat-icon"><i class="fas fa-palette"></i></div>
+        <h3>Arts &amp; Culture</h3>
+        <p>Exhibitions, theatre &amp; dance</p>
+        <span class="cat-count">95 events</span>
+      </a>
+      <a href="events.html?cat=workshop" class="cat-card cat-workshop">
+        <div class="cat-icon"><i class="fas fa-chalkboard-user"></i></div>
+        <h3>Workshops</h3>
+        <p>Skills, crafts &amp; learning</p>
+        <span class="cat-count">260 events</span>
+      </a>
+      <a href="events.html?cat=comedy" class="cat-card cat-comedy">
+        <div class="cat-icon"><i class="fas fa-face-laugh-beam"></i></div>
+        <h3>Comedy</h3>
+        <p>Stand-up &amp; improv shows</p>
+        <span class="cat-count">70 events</span>
+      </a>
+      <a href="events.html?cat=wellness" class="cat-card cat-wellness">
+        <div class="cat-icon"><i class="fas fa-spa"></i></div>
+        <h3>Wellness</h3>
+        <p>Yoga, meditation &amp; retreats</p>
+        <span class="cat-count">115 events</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TRENDING EVENTS -->
+<section class="section trending-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">&#128293; Hot right now</div>
+      <h2>Trending Events</h2>
+      <a href="events.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="events-grid" id="trendingGrid">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- NEARBY STRIP -->
+<section class="section nearby-section">
+  <div class="container">
+    <div class="nearby-inner">
+      <div class="nearby-text">
+        <div class="section-tag">&#128205; Right around you</div>
+        <h2>Events Near You</h2>
+        <p>We've spotted <strong>48 events</strong> happening within 10 km of Bengaluru this weekend. Don't miss out!</p>
+        <a href="events.html" class="btn-primary">Explore Nearby Events</a>
+      </div>
+      <div class="nearby-map">
+        <div class="map-placeholder">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d497695.0974759938!2d77.35073573299991!3d12.954517030611606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4fe0!2sBengaluru%2C+Karnataka!5e0!3m2!1sen!2sin!4v1690000000000"
+            width="100%" height="320" style="border:0;border-radius:16px;" allowfullscreen="" loading="lazy">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THIS WEEKEND -->
+<section class="section weekend-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">&#128197; Coming up</div>
+      <h2>This Weekend</h2>
+      <a href="events.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="weekend-list" id="weekendList"></div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-bg">
+      <div class="blob blob-c1"></div>
+      <div class="blob blob-c2"></div>
+    </div>
+    <div class="cta-content">
+      <h2>Are You an Event Organizer?</h2>
+      <p>Create events, sell tickets, and reach thousands of event-goers in Bengaluru and beyond.</p>
+      <div class="cta-btns">
+        <a href="organizer.html" class="btn-primary btn-lg">Start for Free</a>
+        <a href="contact.html" class="btn-outline btn-lg">Talk to Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section reviews-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">&#128172; What people say</div>
+      <h2>Loved by Event Goers</h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>"Found the best indie gig through MANASA. The booking was seamless and the QR ticket worked perfectly!"</p>
+        <div class="reviewer"><div class="avatar" style="background:#f97316">A</div><span>Ananya R., Koramangala</span></div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>"As an organizer, the dashboard is incredibly intuitive. Sold 200+ tickets in our first event with zero hassle."</p>
+        <div class="reviewer"><div class="avatar" style="background:#8b5cf6">K</div><span>Karthik M., Indiranagar</span></div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+        <p>"Love the personalized recommendations. MANASA knows my vibe — mostly tech meetups and food carnivals!"</p>
+        <div class="reviewer"><div class="avatar" style="background:#10b981">K</div><span>Kavya S., Whitefield</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG PREVIEW -->
+<section class="section blog-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">&#128240; Read up</div>
+      <h2>Latest from the Blog</h2>
+      <a href="blog.html" class="view-all">All Posts <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="blog-grid">
+      <a href="blog-detail.html?id=1" class="blog-card blog-featured">
+        <div class="blog-img" style="background:linear-gradient(135deg,#f97316,#ef4444)">
+          <span class="blog-cat">City Guide</span>
+        </div>
+        <div class="blog-body">
+          <h3>Top 10 Things to Do in Bengaluru This Weekend</h3>
+          <p>From sunrise treks to underground jazz bars — your ultimate weekend planner.</p>
+          <span class="blog-meta">Mar 22, 2025 &middot; 5 min read</span>
+        </div>
+      </a>
+      <div class="blog-side">
+        <a href="blog-detail.html?id=2" class="blog-card-sm">
+          <div class="blog-sm-img" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6)"></div>
+          <div>
+            <span class="blog-cat-sm">Tech</span>
+            <h4>Bengaluru's Biggest Hackathon Season is Here</h4>
+            <span class="blog-meta">Mar 18, 2025</span>
+          </div>
+        </a>
+        <a href="blog-detail.html?id=3" class="blog-card-sm">
+          <div class="blog-sm-img" style="background:linear-gradient(135deg,#10b981,#06b6d4)"></div>
+          <div>
+            <span class="blog-cat-sm">Food</span>
+            <h4>Street Food Festivals You Can't Miss in April</h4>
+            <span class="blog-meta">Mar 15, 2025</span>
+          </div>
+        </a>
+        <a href="blog-detail.html?id=4" class="blog-card-sm">
+          <div class="blog-sm-img" style="background:linear-gradient(135deg,#f59e0b,#ef4444)"></div>
+          <div>
+            <span class="blog-cat-sm">Music</span>
+            <h4>Inside the Indie Music Scene of South Bengaluru</h4>
+            <span class="blog-meta">Mar 10, 2025</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+      <p>Bengaluru's premier event discovery &amp; ticketing platform. Find your next experience.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <h4>Discover</h4>
+      <a href="events.html">Browse Events</a>
+      <a href="events.html?filter=free">Free Events</a>
+      <a href="events.html">Today</a>
+      <a href="events.html">This Weekend</a>
+    </div>
+    <div class="footer-links">
+      <h4>Organizers</h4>
+      <a href="organizer.html">Create Event</a>
+      <a href="organizer.html">Dashboard</a>
+      <a href="contact.html">Advertise</a>
+      <a href="contact.html">Partner With Us</a>
+    </div>
+    <div class="footer-links">
+      <h4>Company</h4>
+      <a href="contact.html">About Us</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+      <a href="contact.html">Help &amp; FAQs</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Get in Touch</h4>
+      <p><i class="fas fa-phone"></i> 7411038339</p>
+      <p><i class="fas fa-map-marker-alt"></i> <a href="https://share.google/alKB1wMb4D0Hpw6tw" target="_blank">View on Map</a></p>
+      <p><i class="fas fa-envelope"></i> manasakala5634@gmail.com</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 MANASA. All rights reserved.</p>
+    <div class="footer-bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+function heroSearchGo() {
+  var q = document.getElementById('heroSearch').value.trim();
+  window.location.href = q ? 'events.html?q=' + encodeURIComponent(q) : 'events.html';
+}
+// Allow Enter key on hero search
+document.addEventListener('DOMContentLoaded', function() {
+  var inp = document.getElementById('heroSearch');
+  if (inp) {
+    inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') heroSearchGo();
+    });
+  }
+});
+</script>
+</body>
+</html>

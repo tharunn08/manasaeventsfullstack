@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events – MANASA</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html" class="active">Events</a></li>
+      <li><a href="organizer.html">Organizers</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Sign In</a>
+      <a href="admin-login.html" class="btn-ghost" style="color:var(--accent);border-color:var(--accent)"><i class="fas fa-shield-alt"></i> Admin</a>
+      <a href="login.html" class="btn-primary">Get Started</a>
+    </div>
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="organizer.html">Organizers</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="login.html" class="btn-primary" style="display:inline-block;margin-top:12px">Get Started</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="section-tag">&#128197; All Events</div>
+    <h1>Discover Events in Bengaluru</h1>
+    <p>Browse, filter, and book tickets for the best events happening near you.</p>
+  </div>
+</div>
+
+<!-- TOP SEARCH + QUICK TAGS -->
+<div style="background:var(--bg2);border-bottom:1px solid var(--border);padding:20px 24px;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+    <div class="search-bar" style="max-width:500px;margin:0;flex:1;">
+      <div class="search-field">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search events, venues, tags&#8230;" id="searchInput" oninput="onSearchInput()">
+      </div>
+      <button class="search-btn" onclick="applyFilters()">Search</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;" id="quickTags">
+      <button class="tag quick-tag" data-cat="music" onclick="quickCatFilter(this,'music')">&#127925; Music</button>
+      <button class="tag quick-tag" data-cat="tech" onclick="quickCatFilter(this,'tech')">&#128187; Tech</button>
+      <button class="tag quick-tag" data-cat="food" onclick="quickCatFilter(this,'food')">&#127772; Food</button>
+      <button class="tag quick-tag" data-cat="sports" onclick="quickCatFilter(this,'sports')">&#127939; Sports</button>
+      <button class="tag quick-tag" data-cat="wellness" onclick="quickCatFilter(this,'wellness')">&#129376; Wellness</button>
+      <button class="tag quick-tag" data-cat="comedy" onclick="quickCatFilter(this,'comedy')">&#128514; Comedy</button>
+    </div>
+  </div>
+</div>
+
+<div class="events-page-layout">
+  <!-- SIDEBAR FILTERS -->
+  <aside class="filters-panel">
+    <h3><i class="fas fa-sliders-h" style="color:var(--accent);margin-right:8px"></i>Filters</h3>
+
+    <div class="filter-group">
+      <label>Category</label>
+      <div class="filter-options">
+        <label class="filter-option"><input type="checkbox" value="music" onchange="applyFilters()"> Music</label>
+        <label class="filter-option"><input type="checkbox" value="tech" onchange="applyFilters()"> Tech</label>
+        <label class="filter-option"><input type="checkbox" value="food" onchange="applyFilters()"> Food &amp; Drink</label>
+        <label class="filter-option"><input type="checkbox" value="sports" onchange="applyFilters()"> Sports</label>
+        <label class="filter-option"><input type="checkbox" value="comedy" onchange="applyFilters()"> Comedy</label>
+        <label class="filter-option"><input type="checkbox" value="wellness" onchange="applyFilters()"> Wellness</label>
+        <label class="filter-option"><input type="checkbox" value="workshop" onchange="applyFilters()"> Workshops</label>
+      </div>
+    </div>
+
+    <div class="filter-divider"></div>
+
+    <div class="filter-group">
+      <label>Price</label>
+      <div class="filter-options">
+        <label class="filter-option"><input type="checkbox" value="free" onchange="applyFilters()"> Free</label>
+        <label class="filter-option"><input type="checkbox" value="paid" onchange="applyFilters()"> Paid</label>
+      </div>
+    </div>
+
+    <div class="filter-divider"></div>
+
+    <div class="filter-group">
+      <label>Date</label>
+      <select class="filter-select" id="dateFilter" onchange="applyFilters()">
+        <option value="">Any time</option>
+        <option value="today">Today</option>
+        <option value="weekend">This Weekend</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+      </select>
+    </div>
+
+    <div class="filter-divider"></div>
+
+    <div class="filter-group">
+      <label>Sort By</label>
+      <select class="filter-select" id="sortFilter" onchange="applyFilters()">
+        <option value="trending">Trending</option>
+        <option value="date">Date (Earliest)</option>
+        <option value="price-low">Price (Low to High)</option>
+        <option value="price-high">Price (High to Low)</option>
+        <option value="rating">Rating</option>
+      </select>
+    </div>
+
+    <div class="filter-divider"></div>
+    <button class="clear-filters" onclick="clearFilters()">Clear All Filters</button>
+  </aside>
+
+  <!-- EVENTS PANEL -->
+  <main>
+    <div class="events-panel-header">
+      <span class="events-count" id="eventsCount">Showing 12 events</span>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div class="view-toggle">
+          <button class="view-btn active" id="gridBtn" onclick="setView('grid')"><i class="fas fa-th"></i></button>
+          <button class="view-btn" id="listBtn" onclick="setView('list')"><i class="fas fa-list"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="events-grid" id="eventsContainer"></div>
+    <div class="pagination" id="pagination"></div>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="index.html" class="logo logo-img-wrap"><img src="logo2.jpeg" alt="MANASA Events" class="nav-logo-img"></a>
+      <p>Bengaluru's premier event discovery &amp; ticketing platform.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="index.html">Home</a>
+      <a href="events.html">Browse Events</a>
+      <a href="organizer.html">Organizers</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p><i class="fas fa-phone"></i> 7411038339</p>
+      <p><i class="fas fa-map-marker-alt"></i><a href="https://share.google/alKB1wMb4D0Hpw6tw" target="_blank"> View on Map</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom"><p>&copy; 2025 MANASA. All rights reserved.</p></div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+var EVENTS_PER_PAGE = 8;
+var currentPage = 1;
+var currentView = 'grid';
+var filteredEvents = [];
+var searchTimer = null;
+
+function onSearchInput() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(applyFilters, 250);
+}
+
+function applyFilters() {
+  var searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+  var catCBs = document.querySelectorAll('.filter-options input[type=checkbox]:checked');
+  var checkedCats = [];
+  var checkedPrice = [];
+  catCBs.forEach(function(c) {
+    if (c.value === 'free' || c.value === 'paid') checkedPrice.push(c.value);
+    else checkedCats.push(c.value);
+  });
+  var sortVal = document.getElementById('sortFilter').value;
+  var dateVal = document.getElementById('dateFilter').value;
+  var now = new Date();
+
+  filteredEvents = EVENTS.filter(function(e) {
+    var matchSearch = !searchVal ||
+      e.title.toLowerCase().includes(searchVal) ||
+      e.tags.some(function(t) { return t.toLowerCase().includes(searchVal); }) ||
+      e.venue.toLowerCase().includes(searchVal) ||
+      e.category.toLowerCase().includes(searchVal);
+
+    var matchCat = checkedCats.length === 0 || checkedCats.includes(e.category);
+    var matchPrice = checkedPrice.length === 0 ||
+      (checkedPrice.includes('free') && e.price === 0) ||
+      (checkedPrice.includes('paid') && e.price > 0);
+
+    var eDate = new Date(e.date);
+    var matchDate = true;
+    if (dateVal === 'today') {
+      matchDate = eDate.toDateString() === now.toDateString();
+    } else if (dateVal === 'weekend') {
+      var day = now.getDay();
+      var sat = new Date(now); sat.setDate(now.getDate() + (6 - day));
+      var sun = new Date(now); sun.setDate(now.getDate() + (7 - day));
+      matchDate = eDate.toDateString() === sat.toDateString() || eDate.toDateString() === sun.toDateString();
+    } else if (dateVal === 'week') {
+      var weekEnd = new Date(now); weekEnd.setDate(now.getDate() + 7);
+      matchDate = eDate >= now && eDate <= weekEnd;
+    } else if (dateVal === 'month') {
+      matchDate = eDate.getMonth() === now.getMonth() && eDate.getFullYear() === now.getFullYear();
+    }
+
+    return matchSearch && matchCat && matchPrice && matchDate;
+  });
+
+  if (sortVal === 'date') filteredEvents.sort(function(a,b){ return new Date(a.date)-new Date(b.date); });
+  else if (sortVal === 'price-low') filteredEvents.sort(function(a,b){ return a.price-b.price; });
+  else if (sortVal === 'price-high') filteredEvents.sort(function(a,b){ return b.price-a.price; });
+  else if (sortVal === 'rating') filteredEvents.sort(function(a,b){ return b.rating-a.rating; });
+  else filteredEvents.sort(function(a,b){ return (b.trending?1:0)-(a.trending?1:0); });
+
+  currentPage = 1;
+  renderEvents();
+}
+
+function quickCatFilter(btn, cat) {
+  var isActive = btn.classList.contains('active');
+  // Clear all quick tags
+  document.querySelectorAll('.quick-tag').forEach(function(t) { t.classList.remove('active'); });
+  // Uncheck all cat checkboxes
+  document.querySelectorAll('.filter-options input[type=checkbox]').forEach(function(c) {
+    if (c.value !== 'free' && c.value !== 'paid') c.checked = false;
+  });
+  if (!isActive) {
+    btn.classList.add('active');
+    var cb = document.querySelector('input[value="' + cat + '"]');
+    if (cb) cb.checked = true;
+  }
+  applyFilters();
+}
+
+function filterByCategory(cat) {
+  var cb = document.querySelector('input[value="' + cat + '"]');
+  if (cb) { cb.checked = true; applyFilters(); }
+}
+
+function clearFilters() {
+  document.querySelectorAll('.filter-options input[type=checkbox]').forEach(function(c) { c.checked = false; });
+  document.getElementById('dateFilter').value = '';
+  document.getElementById('sortFilter').value = 'trending';
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.quick-tag').forEach(function(t) { t.classList.remove('active'); });
+  filteredEvents = EVENTS.slice();
+  currentPage = 1;
+  renderEvents();
+}
+
+function setView(v) {
+  currentView = v;
+  var container = document.getElementById('eventsContainer');
+  document.getElementById('gridBtn').classList.toggle('active', v === 'grid');
+  document.getElementById('listBtn').classList.toggle('active', v === 'list');
+  container.style.gridTemplateColumns = v === 'list' ? '1fr' : '';
+  renderEvents();
+}
+
+function renderEvents() {
+  var container = document.getElementById('eventsContainer');
+  var count = document.getElementById('eventsCount');
+  var total = filteredEvents.length;
+  var start = (currentPage - 1) * EVENTS_PER_PAGE;
+  var paginated = filteredEvents.slice(start, start + EVENTS_PER_PAGE);
+
+  var end = Math.min(currentPage * EVENTS_PER_PAGE, total);
+  if (total === 0) count.textContent = 'No events found';
+  else if (total <= EVENTS_PER_PAGE) count.textContent = 'Showing ' + total + ' event' + (total !== 1 ? 's' : '');
+  else count.textContent = 'Showing ' + (start + 1) + '–' + end + ' of ' + total + ' events';
+
+  if (total === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:60px 0;color:var(--text-muted);grid-column:1/-1">'
+      + '<i class="fas fa-search" style="font-size:36px;margin-bottom:12px;display:block;color:var(--text-dim)"></i>'
+      + '<h3 style="font-family:var(--font-display);margin-bottom:8px">No events found</h3>'
+      + '<p style="margin-bottom:20px">Try different filters or search terms</p>'
+      + '<button class="btn-primary" onclick="clearFilters()">Clear Filters</button>'
+      + '</div>';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = paginated.map(function(e) { return createEventCard(e); }).join('');
+  renderPagination(total);
+}
+
+function renderPagination(total) {
+  var pages = Math.ceil(total / EVENTS_PER_PAGE);
+  var pg = document.getElementById('pagination');
+  if (pages <= 1) { pg.innerHTML = ''; return; }
+
+  var html = '<button class="page-btn" onclick="goPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
+  for (var i = 1; i <= pages; i++) {
+    if (pages > 7 && i > 2 && i < pages - 1 && Math.abs(i - currentPage) > 1) {
+      if (i === 3 || i === pages - 2) html += '<button class="page-btn" disabled style="border:none;background:none">&hellip;</button>';
+      continue;
+    }
+    html += '<button class="page-btn ' + (i === currentPage ? 'active' : '') + '" onclick="goPage(' + i + ')">' + i + '</button>';
+  }
+  html += '<button class="page-btn" onclick="goPage(' + (currentPage + 1) + ')" ' + (currentPage === pages ? 'disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
+  pg.innerHTML = html;
+}
+
+function goPage(n) {
+  var pages = Math.ceil(filteredEvents.length / EVENTS_PER_PAGE);
+  if (n < 1 || n > pages) return;
+  currentPage = n;
+  renderEvents();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Init from URL params
+document.addEventListener('DOMContentLoaded', function() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var qParam = urlParams.get('q');
+  var catParam = urlParams.get('cat');
+  if (qParam) document.getElementById('searchInput').value = qParam;
+  if (catParam) {
+    var cb = document.querySelector('input[value="' + catParam + '"]');
+    if (cb) cb.checked = true;
+    // Also highlight quick tag
+    var qt = document.querySelector('.quick-tag[data-cat="' + catParam + '"]');
+    if (qt) qt.classList.add('active');
+  }
+  applyFilters();
+});
+</script>
+</body>
+</html>

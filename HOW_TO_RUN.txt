@@ -1,0 +1,70 @@
+=============================================
+  MANASA EVENTS — DEPLOY ONLINE (FREE)
+  Using GitHub + Render.com
+  No credit card. No payment. Just free.
+=============================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  STEP 1 — Create a GitHub account (free)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Go to https://github.com
+  2. Click "Sign up" → enter email, password, username
+  3. Verify your email
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  STEP 2 — Upload your project to GitHub
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Go to https://github.com/new
+  2. Repository name: manasa-events
+  3. Set to "Public"
+  4. Click "Create repository"
+  5. On the next page, click "uploading an existing file"
+  6. Drag ALL files from this folder into the browser
+  7. Click "Commit changes"
+
+  ✅ Your project is now on GitHub!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  STEP 3 — Deploy on Render.com (free)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Go to https://render.com
+  2. Click "Get Started for Free"
+  3. Sign up with GitHub (click "Continue with GitHub")
+  4. Click "New +" → select "Web Service"
+  5. Click "Connect" next to your manasa-events repo
+  6. Fill in these settings:
+       Name        : manasa-events
+       Environment : Python
+       Build Command: pip install -r requirements.txt
+       Start Command: python server.py
+  7. Select "Free" plan
+  8. Click "Create Web Service"
+  9. Wait 2-3 minutes for it to deploy...
+  10. You get a free URL like:
+        https://manasa-events.onrender.com
+
+  ✅ Share this URL with your friend!
+     They can sign up from anywhere in the world.
+     All data appears in your admin panel.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ADMIN PANEL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  https://manasa-events.onrender.com/admin-login.html
+
+  First time: type any password → it becomes your admin password
+  You will see ALL users and bookings from everyone.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  RUN LOCALLY (no internet needed)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Windows  : Double-click "START SERVER (Windows).bat"
+  Mac/Linux: Run "bash START SERVER (Mac-Linux).sh"
+  Then open: http://localhost:8000
+
+=============================================
