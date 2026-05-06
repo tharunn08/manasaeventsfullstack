@@ -9,6 +9,56 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+<script>
+// If server is waking up (Render free tier), show a loading screen and auto-retry
+(function() {
+  fetch('/health', { method: 'GET', cache: 'no-store' })
+    .then(function(r) {
+      if (!r.ok) showWakeUp();
+    })
+    .catch(function() { showWakeUp(); });
+
+  function showWakeUp() {
+    var overlay = document.createElement('div');
+    overlay.id = 'wakeup-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;font-family:sans-serif';
+    overlay.innerHTML = '<div style="text-align:center;padding:40px">'
+      + '<div style="font-size:48px;margin-bottom:20px">🎉</div>'
+      + '<h2 style="color:#fff;font-size:22px;margin-bottom:8px">MANASA Events</h2>'
+      + '<p style="color:#94a3b8;font-size:15px;margin-bottom:24px">Server is waking up, please wait...</p>'
+      + '<div style="width:200px;height:4px;background:#1e293b;border-radius:2px;overflow:hidden;margin:0 auto 16px">'
+      + '<div id="wake-bar" style="height:100%;background:#f97316;border-radius:2px;width:0%;transition:width 0.5s"></div></div>'
+      + '<p id="wake-msg" style="color:#64748b;font-size:13px">Connecting...</p>'
+      + '</div>';
+    document.body.appendChild(overlay);
+    var pct = 0;
+    var bar = null;
+    var msg = null;
+    setTimeout(function() {
+      bar = document.getElementById('wake-bar');
+      msg = document.getElementById('wake-msg');
+      tryPing();
+    }, 100);
+    function tryPing() {
+      pct = Math.min(pct + 8, 90);
+      if (bar) bar.style.width = pct + '%';
+      if (msg) msg.textContent = 'Waking up server... (' + Math.round(pct) + '%)';
+      fetch('/health', { cache: 'no-store' })
+        .then(function(r) {
+          if (r.ok) {
+            if (bar) bar.style.width = '100%';
+            if (msg) msg.textContent = 'Ready!';
+            setTimeout(function() {
+              var el = document.getElementById('wakeup-overlay');
+              if (el) el.remove();
+            }, 500);
+          } else { setTimeout(tryPing, 3000); }
+        })
+        .catch(function() { setTimeout(tryPing, 3000); });
+    }
+  }
+})();
+</script>
 
 <!-- NAV -->
 <nav class="navbar" id="navbar">

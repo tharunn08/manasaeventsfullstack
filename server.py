@@ -259,8 +259,12 @@ class ManasaHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        if self.path == '/':
+        if self.path == '/' or self.path == '':
             self.path = '/index.html'
+        # Health check endpoint — Render uses this to know server is alive
+        if self.path == '/health' or self.path == '/ping':
+            self._json({'status': 'ok', 'service': 'MANASA Events'})
+            return
         # Serve API GETs
         if self.path.startswith('/api/'):
             self._handle_api_get()
@@ -318,13 +322,37 @@ class ManasaHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
 
     def log_message(self, format, *args):
-        method = args[0].split()[0] if args else ''
-        path   = args[0].split()[1] if args and len(args[0].split()) > 1 else ''
-        print(f"  {method:6} {path}")
+        try:
+            method = args[0].split()[0] if args else ''
+            path   = args[0].split()[1] if args and len(args[0].split()) > 1 else ''
+            print(f"  {method:6} {path}")
+        except Exception:
+            pass
+
+    def send_error(self, code, message=None, explain=None):
+        # Override to send friendly JSON errors instead of raw HTML errors
+        if code == 404:
+            self._json({'error': 'Not found', 'code': 404}, 404)
+        else:
+            self._json({'error': message or 'Server error', 'code': code}, code)
 
 # ─────────────────────────────────────────────────────────────
-# Get local network IP
+# Keep-alive ping — prevents Render free tier from sleeping
+# Pings /health every 14 minutes (Render sleeps after 15 min)
 # ─────────────────────────────────────────────────────────────
+def keep_alive():
+    import time, urllib.request
+    time.sleep(60)  # wait 1 min after startup before pinging
+    while True:
+        try:
+            url = os.environ.get('RENDER_EXTERNAL_URL', f'http://localhost:{PORT}')
+            urllib.request.urlopen(f'{url}/health', timeout=10)
+            print('  PING   /health (keep-alive)')
+        except Exception as e:
+            print(f'  PING   failed: {e}')
+        time.sleep(840)  # 14 minutes
+
+
 def get_local_ip():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -348,6 +376,8 @@ if __name__ == '__main__':
     if is_cloud:
         print(f"\n  Running on cloud  (port {PORT})")
         print(f"  Database : {DB_FILE}")
+        print(f"  Keep-alive ping every 14 min to prevent sleep")
+        threading.Thread(target=keep_alive, daemon=True).start()
     else:
         local_ip = get_local_ip()
         print(f"\n  Your URL     : http://localhost:{PORT}")
